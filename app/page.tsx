@@ -10,6 +10,7 @@ export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [recording, setRecording] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -34,6 +35,7 @@ export default function Home() {
   const startRecording = async () => {
     if (busy || recording) return;
     setError(null);
+    setStatusMsg(null);
     cancelledRef.current = false;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -54,7 +56,7 @@ export default function Home() {
       mr.start();
       recorderRef.current = mr;
       setRecording(true);
-    } catch (e: any) {
+    } catch {
       setError("マイクへのアクセスに失敗しました");
     }
   };
@@ -70,25 +72,57 @@ export default function Home() {
 
   const transcribeAndSave = async (blob: Blob) => {
     setBusy(true);
+    setStatusMsg("音声をアップロード中...");
     try {
+      // Step 1: アップロード & 文字起こし開始
       const fd = new FormData();
       fd.append("audio", blob, "recording.webm");
-      const res = await fetch("/api/transcribe", { method: "POST", body: fd });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "失敗");
-      const text = (data.text || "").trim();
-      if (!text) {
+      const startRes = await fetch("/api/transcribe/start", { method: "POST", body: fd });
+      const startData = await startRes.json();
+      if (!startRes.ok) throw new Error(startData.error || "アップロード失敗");
+
+      const { id } = startData;
+      setStatusMsg("文字起こし中...");
+
+      // Step 2: クライアントでポーリング
+      const text = await pollUntilDone(id);
+      if (!text.trim()) {
         setError("文字起こしの結果が空でした");
         return;
       }
       const post: Post = { id: crypto.randomUUID(), text, createdAt: Date.now() };
       persist([post, ...posts]);
-    } catch (e: any) {
-      setError(e.message || "エラーが発生しました");
+      setStatusMsg(null);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "エラーが発生しました");
+      setStatusMsg(null);
     } finally {
       setBusy(false);
     }
   };
+
+  const pollUntilDone = (id: string): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const max = 120_000;
+      const start = Date.now();
+      const tick = async () => {
+        if (Date.now() - start > max) {
+          reject(new Error("文字起こしがタイムアウトしました"));
+          return;
+        }
+        try {
+          const res = await fetch(`/api/transcribe/status?id=${id}`);
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "ステータス確認失敗");
+          if (data.status === "completed") return resolve(data.text ?? "");
+          if (data.status === "error") return reject(new Error(data.error ?? "文字起こしエラー"));
+          setTimeout(tick, 2000);
+        } catch (e) {
+          reject(e);
+        }
+      };
+      tick();
+    });
 
   return (
     <main style={styles.main}>
@@ -118,10 +152,14 @@ export default function Home() {
             cursor: busy ? "not-allowed" : "pointer",
           }}
         >
-          {busy ? "..." : "🎤"}
+          {busy ? "⏳" : "🎤"}
         </button>
         <p style={styles.hint}>
-          {busy ? "文字起こし中..." : recording ? "録音中（指を離すと送信）" : "ボタンを長押しして話す"}
+          {busy
+            ? statusMsg ?? "処理中..."
+            : recording
+            ? "録音中（指を離すと送信）"
+            : "ボタンを長押しして話す"}
         </p>
         {error && <p style={styles.error}>{error}</p>}
       </div>
@@ -182,11 +220,14 @@ const styles: Record<string, React.CSSProperties> = {
     color: "#666",
     fontSize: 14,
     margin: 0,
+    textAlign: "center",
   },
   error: {
     color: "#e53935",
     fontSize: 13,
     margin: 0,
+    textAlign: "center",
+    maxWidth: 320,
   },
   list: {
     display: "flex",
