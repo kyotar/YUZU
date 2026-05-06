@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
     headers: { authorization: apiKey, "content-type": "application/json" },
     body: JSON.stringify({
       audio_url: upload_url,
+      speech_model: "universal-2",
       language_code: "ja",
     }),
   });
