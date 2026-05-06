@@ -132,16 +132,15 @@ export default function Home() {
 
   // ---- Transcription ----
   const transcribeAndSave = async (blob: Blob) => {
-    setStatusMsg("音声をアップロード中...");
+    setStatusMsg("文字起こし中...");
     try {
       const fd = new FormData();
       fd.append("audio", blob, "recording.webm");
-      const startRes = await fetch("/api/transcribe/start", { method: "POST", body: fd });
-      const startData = await startRes.json();
-      if (!startRes.ok) throw new Error(startData.error || "アップロード失敗");
+      const res = await fetch("/api/transcribe", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "文字起こし失敗");
 
-      setStatusMsg("文字起こし中...");
-      const text = await pollUntilDone(startData.id);
+      const text: string = data.text ?? "";
       if (!text.trim()) { setError("文字起こしの結果が空でした"); return; }
 
       persist([{ id: crypto.randomUUID(), text, createdAt: Date.now() }, ...posts]);
@@ -153,23 +152,6 @@ export default function Home() {
       setPhaseSync("idle");
     }
   };
-
-  const pollUntilDone = (id: string): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const deadline = Date.now() + 120_000;
-      const tick = async () => {
-        if (Date.now() > deadline) { reject(new Error("タイムアウトしました")); return; }
-        try {
-          const res = await fetch(`/api/transcribe/status?id=${id}`);
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "ステータス確認失敗");
-          if (data.status === "completed") return resolve(data.text ?? "");
-          if (data.status === "error") return reject(new Error(data.error ?? "文字起こしエラー"));
-          setTimeout(tick, 2000);
-        } catch (e) { reject(e); }
-      };
-      tick();
-    });
 
   // ---- Render ----
   const isHolding = phase === "holding";
