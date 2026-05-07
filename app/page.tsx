@@ -60,22 +60,44 @@ export default function Home() {
     if (e) setMyEmoji(e);
 
     fetch("/api/posts")
-      .then((r) => r.json())
-      .then((data: { posts: Post[] }) => setPosts(data.posts ?? []))
+      .then(safeJson)
+      .then((data) => setPosts(data?.posts ?? []))
       .catch(() => {});
   }, []);
 
+  const pickRecorderMime = (): string | undefined => {
+    if (typeof MediaRecorder === "undefined") return undefined;
+    const candidates = [
+      "audio/mp4",
+      "audio/mp4;codecs=mp4a.40.2",
+      "audio/webm;codecs=opus",
+      "audio/webm",
+      "audio/ogg;codecs=opus",
+    ];
+    for (const m of candidates) {
+      try { if (MediaRecorder.isTypeSupported(m)) return m; } catch {}
+    }
+    return undefined;
+  };
+
   const startMediaRecorder = async (): Promise<boolean> => {
     try {
+      if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+        setError("このブラウザは録音に対応していません");
+        setPhaseSync("idle");
+        return false;
+      }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
-      const mr = new MediaRecorder(stream);
+      const mime = pickRecorderMime();
+      const mr = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
       chunksRef.current = [];
       mr.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
       mr.start();
       recorderRef.current = mr;
       return true;
-    } catch {
+    } catch (err) {
+      console.error("startMediaRecorder failed", err);
       setError("マイクへのアクセスに失敗しました");
       setPhaseSync("idle");
       return false;
@@ -143,13 +165,16 @@ export default function Home() {
   const transcribeAndSave = async (blob: Blob) => {
     setStatusMsg("言葉にしてるよ…");
     try {
+      const ext = blob.type.includes("mp4") ? "mp4"
+        : blob.type.includes("ogg") ? "ogg"
+        : "webm";
       const fd = new FormData();
-      fd.append("audio", blob, "recording.webm");
+      fd.append("audio", blob, `recording.${ext}`);
       const res = await fetch("/api/transcribe", { method: "POST", body: fd });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "文字起こし失敗");
+      const data = await safeJson(res);
+      if (!res.ok) throw new Error(data?.error || "文字起こしに失敗しました");
 
-      const text: string = data.text ?? "";
+      const text: string = data?.text ?? "";
       if (!text.trim()) { setError("声を聴き取れなかった"); return; }
 
       const blobShape = randomBlob();
@@ -158,10 +183,16 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, emoji: myEmoji, blob: blobShape }),
       });
-      const saveData = await saveRes.json();
-      if (!saveRes.ok) throw new Error(saveData.error || "保存に失敗しました");
+      const saveData = await safeJson(saveRes);
+      if (!saveRes.ok) {
+        if (saveData?.error === "kv_not_configured") {
+          throw new Error("サーバーの保存先が未設定です（KV未接続）");
+        }
+        throw new Error(saveData?.error || "保存に失敗しました");
+      }
 
-      const newPost: Post = saveData.post;
+      const newPost: Post | undefined = saveData?.post;
+      if (!newPost) throw new Error("保存に失敗しました");
       setPosts((prev) => [newPost, ...prev]);
       setNewPostId(newPost.id);
       setStatusMsg(null);
@@ -236,6 +267,16 @@ export default function Home() {
       </section>
     </main>
   );
+}
+
+async function safeJson(res: Response): Promise<any | null> {
+  try {
+    const text = await res.text();
+    if (!text) return null;
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
 }
 
 function formatDate(ts: number) {
