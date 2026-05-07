@@ -1,15 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import StampBar from "@/components/StampBar";
+import { type Stamp } from "@/lib/stamps";
 
-type Post = { id: string; text: string; createdAt: number; emoji: string; blob?: [string, string, string] };
-type Phase = "idle" | "holding" | "recording" | "busy";
+type Post = {
+  id: string;
+  text: string;
+  createdAt: number;
+  emoji: string;
+  blob: [string, string, string];
+  reactions: Record<Stamp, number>;
+  reacted: Stamp[];
+};
+type Phase = "idle" | "recording" | "busy";
 
-const STORAGE_KEY = "peach-posts";
 const EMOJI_KEY = "peach-emoji";
-const HOLD_MS = 2000;
-const RING_R = 68;
-const RING_CIRC = 2 * Math.PI * RING_R; // ≈ 427
+const MIN_RECORD_MS = 300;
 
 const FRUITS = ["🍑","🍋","🍇","🥝","🍓","🫐","🍈","🍊","🍍","🥭","🍌","🍒","🍎","🍐","🫒"];
 
@@ -31,7 +38,6 @@ export default function Home() {
   const [newPostId, setNewPostId] = useState<string | null>(null);
 
   const phaseRef = useRef<Phase>("idle");
-  const pressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pressStartRef = useRef<number>(0);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -43,25 +49,21 @@ export default function Home() {
   };
 
   useEffect(() => {
+    let e: string | null = null;
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const loaded: Post[] = JSON.parse(raw);
-        setPosts(loaded.map(p => p.blob ? p : { ...p, blob: randomBlob() }));
-      }
-      let e = localStorage.getItem(EMOJI_KEY);
+      e = localStorage.getItem(EMOJI_KEY);
       if (!e) {
         e = pickFruit();
         localStorage.setItem(EMOJI_KEY, e);
       }
-      setMyEmoji(e);
     } catch {}
-  }, []);
+    if (e) setMyEmoji(e);
 
-  const persist = (next: Post[]) => {
-    setPosts(next);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch {}
-  };
+    fetch("/api/posts")
+      .then((r) => r.json())
+      .then((data: { posts: Post[] }) => setPosts(data.posts ?? []))
+      .catch(() => {});
+  }, []);
 
   const startMediaRecorder = async (): Promise<boolean> => {
     try {
@@ -108,25 +110,18 @@ export default function Home() {
     setError(null);
     setShortTap(false);
     pressStartRef.current = Date.now();
-    setPhaseSync("holding");
+    setPhaseSync("recording");
 
     const ok = await startMediaRecorder();
     if (!ok) return;
-
-    pressTimerRef.current = setTimeout(() => {
-      if (phaseRef.current === "holding") setPhaseSync("recording");
-    }, HOLD_MS);
   };
 
   const handlePressEnd = async () => {
-    const cur = phaseRef.current;
-    if (cur === "idle" || cur === "busy") return;
-
-    if (pressTimerRef.current) { clearTimeout(pressTimerRef.current); pressTimerRef.current = null; }
+    if (phaseRef.current !== "recording") return;
 
     const held = Date.now() - pressStartRef.current;
 
-    if (held < HOLD_MS) {
+    if (held < MIN_RECORD_MS) {
       cancelRecorder();
       setPhaseSync("idle");
       setShortTap(true);
@@ -141,7 +136,6 @@ export default function Home() {
   };
 
   const handlePressCancel = () => {
-    if (pressTimerRef.current) { clearTimeout(pressTimerRef.current); pressTimerRef.current = null; }
     cancelRecorder();
     setPhaseSync("idle");
   };
@@ -158,9 +152,18 @@ export default function Home() {
       const text: string = data.text ?? "";
       if (!text.trim()) { setError("声を聴き取れなかった"); return; }
 
-      const id = crypto.randomUUID();
-      persist([{ id, text, createdAt: Date.now(), emoji: myEmoji, blob: randomBlob() }, ...posts]);
-      setNewPostId(id);
+      const blobShape = randomBlob();
+      const saveRes = await fetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, emoji: myEmoji, blob: blobShape }),
+      });
+      const saveData = await saveRes.json();
+      if (!saveRes.ok) throw new Error(saveData.error || "保存に失敗しました");
+
+      const newPost: Post = saveData.post;
+      setPosts((prev) => [newPost, ...prev]);
+      setNewPostId(newPost.id);
       setStatusMsg(null);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "エラーが発生しました");
@@ -170,19 +173,14 @@ export default function Home() {
     }
   };
 
-  const isHolding = phase === "holding";
   const isRecording = phase === "recording";
   const isBusy = phase === "busy";
 
-  const micClass =
-    "mic-button" +
-    (isHolding ? " holding" : "") +
-    (isRecording ? " recording" : "");
+  const micClass = "mic-button" + (isRecording ? " recording" : "");
 
   const hint =
     isBusy ? (statusMsg ?? "処理中…") :
     isRecording ? "聴いてるよ…" :
-    isHolding ? "そのまま、押し続けて…" :
     "長押しして、話す";
 
   return (
@@ -194,20 +192,6 @@ export default function Home() {
 
       <section style={styles.heroSection}>
         <div className="mic-wrap">
-          {isHolding && (
-            <svg width={148} height={148} className="ring-svg">
-              <circle
-                cx={74} cy={74} r={RING_R}
-                fill="none"
-                stroke="var(--peach-deep)"
-                strokeWidth={5}
-                strokeLinecap="round"
-                strokeDasharray={RING_CIRC}
-                strokeDashoffset={RING_CIRC}
-                style={{ animation: `fillRing ${HOLD_MS}ms linear forwards` }}
-              />
-            </svg>
-          )}
           <button
             aria-label="長押しで録音"
             aria-pressed={isRecording}
@@ -215,7 +199,7 @@ export default function Home() {
             className={micClass}
             onMouseDown={handlePressStart}
             onMouseUp={handlePressEnd}
-            onMouseLeave={() => { if (isHolding || isRecording) handlePressEnd(); }}
+            onMouseLeave={() => { if (isRecording) handlePressEnd(); }}
             onTouchStart={handlePressStart}
             onTouchEnd={handlePressEnd}
             onTouchCancel={handlePressCancel}
@@ -245,6 +229,7 @@ export default function Home() {
             <div className="post-body">
               <time className="post-time">{formatDate(p.createdAt)}</time>
               <p className="post-text">{p.text}</p>
+              <StampBar postId={p.id} reactions={p.reactions} reacted={p.reacted} />
             </div>
           </article>
         ))}

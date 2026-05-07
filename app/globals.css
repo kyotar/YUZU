@@ -103,11 +103,6 @@ html, body {
   box-shadow: 0 4px 16px rgba(196, 169, 154, 0.2);
 }
 
-.mic-button.holding {
-  background: var(--peach-deep);
-  animation: blob-morph 2s var(--ease-soft) infinite;
-}
-
 .mic-button.recording {
   background: var(--peach-deep);
   animation: blob-pulse 1.2s var(--ease-soft) infinite;
@@ -133,26 +128,9 @@ html, body {
   66%      { border-radius: var(--blob-3); transform: scale(0.97); }
 }
 
-@keyframes blob-morph {
-  0%, 100% { border-radius: var(--blob-1); }
-  50%      { border-radius: var(--blob-3); }
-}
-
 @keyframes ripple {
   0%   { transform: scale(1);    opacity: 0.3; }
   100% { transform: scale(1.55); opacity: 0; }
-}
-
-/* progress ring (long-press 2s) */
-.ring-svg {
-  position: absolute;
-  inset: 0;
-  transform: rotate(-90deg);
-  pointer-events: none;
-}
-@keyframes fillRing {
-  from { stroke-dashoffset: 427; }
-  to   { stroke-dashoffset: 0; }
 }
 
 /* ===== Post card ===== */
@@ -213,6 +191,47 @@ html, body {
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+/* ===== Stamp bar (reactions) ===== */
+.stamp-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.stamp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 16px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--peach-light);
+  border: 1.5px solid var(--surface-border);
+  color: var(--text-primary);
+  cursor: pointer;
+  line-height: 1;
+  transition: transform 0.15s var(--ease-soft),
+              background 0.15s var(--ease-soft),
+              border-color 0.15s var(--ease-soft);
+}
+.stamp-btn:hover {
+  transform: scale(1.12);
+  background: var(--surface-hover);
+}
+.stamp-btn:active { transform: scale(0.96); }
+.stamp-btn.reacted {
+  background: var(--peach-main);
+  border-color: var(--peach-deep);
+}
+.stamp-emoji { font-size: 16px; line-height: 1; }
+.stamp-count {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-left: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.stamp-btn.reacted .stamp-count { color: var(--text-primary); }
 
 /* ===== Misc ===== */
 @keyframes fadeIn {
