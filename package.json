@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "design:lint": "npx -y @google/design.md lint DESIGN.md",
+    "design:drift": "node scripts/check-design-drift.mjs",
+    "design:check": "npm run design:drift && npm run design:lint"
   },
   "dependencies": {
     "next": "^14.2.35",
