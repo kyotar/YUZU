@@ -1,34 +1,26 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import StampBar from "@/components/StampBar";
-import { type Stamp } from "@/lib/stamps";
+import TabBar, { type Tab } from "@/components/TabBar";
+import SpeakView from "@/components/SpeakView";
+import TimelineView, { type Post } from "@/components/TimelineView";
+import MyPageView from "@/components/MyPageView";
 
-type Post = {
-  id: string;
-  text: string;
-  createdAt: number;
-  emoji: string;
-  blob: [string, string, string];
-  reactions: Record<Stamp, number>;
-  reacted: Stamp[];
-};
 type Phase = "idle" | "recording" | "busy";
 
 const EMOJI_KEY = "peach-emoji";
 const MIN_RECORD_MS = 300;
-
 const FRUITS = ["🍑","🍋","🍇","🥝","🍓","🫐","🍈","🍊","🍍","🥭","🍌","🍒","🍎","🍐","🫒"];
-
 const pickFruit = () => FRUITS[Math.floor(Math.random() * FRUITS.length)];
 
 function randomEllipse(): string {
-  const r = () => 38 + Math.round(Math.random() * 26);
+  const r = () => 30 + Math.round(Math.random() * 40); // 30–70 (more distorted)
   return `${r()}% ${r()}% ${r()}% ${r()}% / ${r()}% ${r()}% ${r()}% ${r()}%`;
 }
 const randomBlob = (): [string, string, string] => [randomEllipse(), randomEllipse(), randomEllipse()];
 
 export default function Home() {
+  const [tab, setTab] = useState<Tab>("speak");
   const [posts, setPosts] = useState<Post[]>([]);
   const [phase, setPhase] = useState<Phase>("idle");
   const [shortTap, setShortTap] = useState(false);
@@ -36,6 +28,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [myEmoji, setMyEmoji] = useState<string>("🍑");
   const [newPostId, setNewPostId] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
 
   const phaseRef = useRef<Phase>("idle");
   const pressStartRef = useRef<number>(0);
@@ -64,6 +57,18 @@ export default function Home() {
       .then((data) => setPosts(data?.posts ?? []))
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Reset scroll state on tab change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+    setScrolled(false);
+  }, [tab]);
 
   const pickRecorderMime = (): string | undefined => {
     if (typeof MediaRecorder === "undefined") return undefined;
@@ -196,6 +201,8 @@ export default function Home() {
       setPosts((prev) => [newPost, ...prev]);
       setNewPostId(newPost.id);
       setStatusMsg(null);
+      // Auto-jump to timeline so the user sees their new post
+      setTab("timeline");
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "エラーが発生しました");
       setStatusMsg(null);
@@ -204,67 +211,34 @@ export default function Home() {
     }
   };
 
-  const isRecording = phase === "recording";
-  const isBusy = phase === "busy";
-
-  const micClass = "mic-button" + (isRecording ? " recording" : "");
-
-  const hint =
-    isBusy ? (statusMsg ?? "処理中…") :
-    isRecording ? "聴いてるよ…" :
-    "長押しして、話す";
-
   return (
-    <main style={styles.main}>
-      <header style={styles.header}>
-        <span className="font-display" style={styles.logo}>🍑 PEACH</span>
-        <span style={styles.tagline}>声は、種。つぶやきは、実る。</span>
+    <main className="app-shell">
+      <header className="app-header" data-hidden={scrolled}>
+        <span className="app-logo font-display">🍑 PEACH</span>
+        <span className="app-tagline">声は、種。つぶやきは、実る。</span>
       </header>
 
-      <section style={styles.heroSection}>
-        <div className="mic-wrap">
-          <button
-            aria-label="長押しで録音"
-            aria-pressed={isRecording}
-            disabled={isBusy}
-            className={micClass}
-            onMouseDown={handlePressStart}
-            onMouseUp={handlePressEnd}
-            onMouseLeave={() => { if (isRecording) handlePressEnd(); }}
-            onTouchStart={handlePressStart}
-            onTouchEnd={handlePressEnd}
-            onTouchCancel={handlePressCancel}
-            onContextMenu={(e) => e.preventDefault()}
-          >
-            {isBusy ? "🌱" : "🎤"}
-          </button>
-        </div>
+      {tab === "speak" && (
+        <SpeakView
+          phase={phase}
+          shortTap={shortTap}
+          statusMsg={statusMsg}
+          error={error}
+          onPressStart={handlePressStart}
+          onPressEnd={handlePressEnd}
+          onPressCancel={handlePressCancel}
+        />
+      )}
 
-        <p style={styles.hint}>{hint}</p>
+      {tab === "timeline" && (
+        <TimelineView posts={posts} newPostId={newPostId} />
+      )}
 
-        {shortTap && <p style={styles.shortTapMsg}>もう少し長く押してね</p>}
-        {error && <p style={styles.error}>{error}</p>}
-      </section>
+      {tab === "mypage" && (
+        <MyPageView myEmoji={myEmoji} postCount={posts.length} />
+      )}
 
-      <section style={styles.list}>
-        {posts.length === 0 && !error && (
-          <p style={styles.empty}>まだ誰も話していない。<br />最初の声を植えよう。</p>
-        )}
-        {posts.map((p) => (
-          <article
-            key={p.id}
-            className={`post-card${p.id === newPostId ? " new" : ""}`}
-            style={p.blob ? ({ '--blob-soft-1': p.blob[0], '--blob-soft-2': p.blob[1], '--blob-soft-3': p.blob[2] } as React.CSSProperties) : undefined}
-          >
-            <div className="post-emoji" aria-hidden>{p.emoji ?? "🍑"}</div>
-            <div className="post-body">
-              <time className="post-time">{formatDate(p.createdAt)}</time>
-              <p className="post-text">{p.text}</p>
-              <StampBar postId={p.id} reactions={p.reactions} reacted={p.reacted} />
-            </div>
-          </article>
-        ))}
-      </section>
+      <TabBar active={tab} onChange={setTab} compact={scrolled} />
     </main>
   );
 }
@@ -278,28 +252,3 @@ async function safeJson(res: Response): Promise<any | null> {
     return null;
   }
 }
-
-function formatDate(ts: number) {
-  const diff = Date.now() - ts;
-  const min = Math.floor(diff / 60000);
-  if (min < 1) return "たった今";
-  if (min < 60) return `${min}分前`;
-  const hr = Math.floor(min / 60);
-  if (hr < 24) return `${hr}時間前`;
-  const d = new Date(ts);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  main: { maxWidth: 640, margin: "0 auto", padding: "32px 20px 96px", minHeight: "100vh" },
-  header: { display: "flex", flexDirection: "column", alignItems: "center", gap: 6, marginBottom: 48 },
-  logo: { fontSize: 26, color: "var(--text-primary)" },
-  tagline: { fontSize: 12, color: "var(--text-secondary)", letterSpacing: "0.05em" },
-  heroSection: { display: "flex", flexDirection: "column", alignItems: "center", gap: 18, marginBottom: 64 },
-  hint: { color: "var(--text-secondary)", fontSize: 14, margin: 0, textAlign: "center", letterSpacing: "0.02em" },
-  shortTapMsg: { color: "var(--peach-deep)", fontSize: 13, margin: 0, textAlign: "center", fontWeight: 500, animation: "fadeIn 200ms ease" },
-  error: { color: "var(--peach-deep)", fontSize: 13, margin: 0, textAlign: "center", maxWidth: 320 },
-  list: { display: "flex", flexDirection: "column", gap: 14 },
-  empty: { color: "var(--text-muted)", fontSize: 14, textAlign: "center", lineHeight: 1.8, margin: "32px 0" },
-};
