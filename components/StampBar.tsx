@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { STAMPS, type Stamp } from "@/lib/stamps";
 
 type Props = {
@@ -13,6 +13,19 @@ export default function StampBar({ postId, reactions, reacted }: Props) {
   const [counts, setCounts] = useState<Record<Stamp, number>>(reactions);
   const [mine, setMine] = useState<Set<Stamp>>(new Set(reacted));
   const [pending, setPending] = useState<Set<Stamp>>(new Set());
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!pickerOpen) return;
+    const onDocClick = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setPickerOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, [pickerOpen]);
 
   const toggle = async (stamp: Stamp) => {
     if (pending.has(stamp)) return;
@@ -43,7 +56,6 @@ export default function StampBar({ postId, reactions, reacted }: Props) {
         return n;
       });
     } catch {
-      // revert
       setCounts((c) => ({ ...c, [stamp]: counts[stamp] ?? 0 }));
       setMine((m) => {
         const n = new Set(m);
@@ -59,9 +71,11 @@ export default function StampBar({ postId, reactions, reacted }: Props) {
     }
   };
 
+  const visible = STAMPS.filter(({ stamp }) => (counts[stamp] ?? 0) > 0 || mine.has(stamp));
+
   return (
-    <div className="stamp-bar">
-      {STAMPS.map(({ stamp, label }) => {
+    <div className="stamp-bar" ref={wrapRef}>
+      {visible.map(({ stamp, label }) => {
         const count = counts[stamp] ?? 0;
         const isMine = mine.has(stamp);
         return (
@@ -78,6 +92,39 @@ export default function StampBar({ postId, reactions, reacted }: Props) {
           </button>
         );
       })}
+
+      <div className="stamp-add-wrap">
+        <button
+          type="button"
+          className="stamp-add-btn"
+          aria-label="リアクションを追加"
+          aria-expanded={pickerOpen}
+          onClick={() => setPickerOpen((v) => !v)}
+        >
+          <span aria-hidden>☺</span>
+          <span aria-hidden className="stamp-add-plus">+</span>
+        </button>
+        {pickerOpen && (
+          <div className="stamp-picker" role="menu">
+            {STAMPS.map(({ stamp, label }) => (
+              <button
+                key={stamp}
+                type="button"
+                role="menuitem"
+                className={`stamp-picker-item${mine.has(stamp) ? " reacted" : ""}`}
+                aria-label={label}
+                title={label}
+                onClick={() => {
+                  toggle(stamp);
+                  setPickerOpen(false);
+                }}
+              >
+                {stamp}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

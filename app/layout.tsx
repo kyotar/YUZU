@@ -1,14 +1,15 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Fraunces, Zen_Kaku_Gothic_New } from "next/font/google";
+import { Unbounded, Noto_Sans_JP } from "next/font/google";
 
-const fraunces = Fraunces({
+const unbounded = Unbounded({
   subsets: ["latin"],
+  weight: ["400", "700", "900"],
   display: "swap",
   variable: "--font-display",
 });
 
-const zenKaku = Zen_Kaku_Gothic_New({
+const notoSansJp = Noto_Sans_JP({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
   display: "swap",
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ja" className={`${fraunces.variable} ${zenKaku.variable}`}>
+    <html lang="ja" className={`${unbounded.variable} ${notoSansJp.variable}`}>
       <body>{children}</body>
     </html>
   );

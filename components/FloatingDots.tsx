@@ -15,7 +15,14 @@ type Dot = {
   fromY: string;
 };
 
-const COLORS = ["var(--peach-main)", "var(--leaf-green)", "var(--peach-deep)"];
+const COLORS = [
+  "var(--tangerine)",
+  "var(--candy-pink)",
+  "var(--bubblegum)",
+  "var(--sky-pop)",
+  "var(--lemon-pop)",
+  "var(--mint-fresh)",
+];
 
 function makeDots(count: number): Dot[] {
   const dots: Dot[] = [];
