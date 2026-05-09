@@ -30,15 +30,13 @@ export default function TimelineView({ posts, newPostId }: Props) {
           <article
             key={p.id}
             className={`post-card${p.id === newPostId ? " new" : ""}`}
-            style={p.blob ? ({
-              "--blob-soft-1": p.blob[0],
-              "--blob-soft-2": p.blob[1],
-              "--blob-soft-3": p.blob[2],
-            } as React.CSSProperties) : undefined}
           >
-            <div className="post-emoji" aria-hidden>{p.emoji ?? "🍑"}</div>
-            <div className="post-body">
+            <div className="post-header">
+              <div className="post-emoji" aria-hidden>{p.emoji ?? "🍑"}</div>
+              <span className="post-name">ななしさん</span>
               <time className="post-time">{formatDate(p.createdAt)}</time>
+            </div>
+            <div className="post-body">
               <p className="post-text">{p.text}</p>
               <StampBar postId={p.id} reactions={p.reactions} reacted={p.reacted} />
             </div>

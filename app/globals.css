@@ -9,13 +9,13 @@
   --mint-fresh: #5DEBB8;
 
   /* Neutral */
-  --text-primary:   #2D1F3D;
-  --text-secondary: #8B6B8B;
-  --text-muted:     #C4A0C4;
+  --text-primary:   #611126;
+  --text-secondary: rgba(97,17,38,0.7);
+  --text-muted:     rgba(97,17,38,0.4);
 
   /* Surface */
-  --surface-card:   #FFFAF5;
-  --surface-border: #F0DDD0;
+  --surface-card:   #ffffff;
+  --surface-border: #F6F1EE;
   --surface-hover:  #FFE8D6;
 
   /* Blob shapes — strong (mic button) */
@@ -53,7 +53,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 body {
-  background: linear-gradient(160deg, #FFF5F0 0%, #FFF0FA 40%, #F5F0FF 70%, #F0F8FF 100%);
+  background: #fff6f1;
   background-attachment: fixed;
   min-height: 100vh;
 }
@@ -139,56 +139,60 @@ body {
 
 /* ===== Post card ===== */
 .post-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1.5px solid var(--surface-border);
-  padding: 20px 24px;
-  border-radius: var(--blob-soft-1);
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0px 0px 36px -16px rgba(97,17,38,0.18);
+  padding: 16px 20px;
   display: flex;
-  gap: 14px;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 10px;
   transition: transform 0.2s var(--ease-soft),
               box-shadow 0.2s var(--ease-soft);
-  animation: card-wobble 12s var(--ease-soft) infinite;
 }
 .post-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 22px rgba(255, 110, 180, 0.12);
+  box-shadow: 0px 4px 36px -8px rgba(97,17,38,0.22);
 }
 .post-card.new {
-  animation: post-appear 0.5s var(--ease-organic) both,
-             card-wobble 12s var(--ease-soft) 0.5s infinite;
-}
-@keyframes card-wobble {
-  0%, 100% { border-radius: var(--blob-soft-1); }
-  33%      { border-radius: var(--blob-soft-2); }
-  66%      { border-radius: var(--blob-soft-3); }
+  animation: post-appear 0.5s var(--ease-organic) both;
 }
 @keyframes post-appear {
   0%   { opacity: 0; transform: translateY(12px) scale(0.96); }
   100% { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .post-emoji {
   flex: 0 0 auto;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   font-size: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--peach-mist);
-  border-radius: 42% 38% 40% 36% / 38% 42% 36% 40%;
+  border-radius: 50%;
 }
 
-.post-body { flex: 1 1 auto; min-width: 0; }
-.post-time {
-  display: block;
-  font-size: var(--text-xs);
-  color: var(--text-muted);
-  margin-bottom: 6px;
+.post-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
 }
+
+.post-time {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.post-body { display: block; }
 .post-text {
   margin: 0;
   font-size: var(--text-base);
@@ -327,7 +331,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  padding: 28px 20px 8px;
+  padding: 28px 20px 20px;
   transition: opacity 0.3s var(--ease-soft), transform 0.3s var(--ease-soft);
 }
 .app-header[data-hidden="true"] {
@@ -335,8 +339,7 @@ body {
   transform: translateY(-8px);
   pointer-events: none;
 }
-.app-logo { font-size: 26px; color: var(--text-primary); }
-.app-tagline { font-size: var(--text-xs); color: var(--text-secondary); letter-spacing: 0.05em; }
+.app-logo { height: 28px; width: auto; display: block; }
 
 /* ===== Tab bar (Liquid Glass) ===== */
 .tab-bar {
