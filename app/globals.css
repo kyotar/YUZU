@@ -1,12 +1,14 @@
 :root {
-  /* Primary palette (pop) */
-  --tangerine:  #FF6339;
-  --bubblegum:  #FFCAFD;
-  --peach-mist: #FFF5F0;
-  --candy-pink: #FF6EB4;
-  --sky-pop:    #74D7FF;
-  --lemon-pop:  #FFE566;
-  --mint-fresh: #5DEBB8;
+  /* Primary palette */
+  --brand-pink:  #FF2B64;
+  --brand-purple: #E0AAFF;
+  --tangerine:   #FF2B64;  /* alias → brand-pink */
+  --bubblegum:   #FFCAFD;
+  --peach-mist:  #FFF5F0;
+  --candy-pink:  #FF6EB4;
+  --sky-pop:     #74D7FF;
+  --lemon-pop:   #FFE566;
+  --mint-fresh:  #5DEBB8;
 
   /* Neutral */
   --text-primary:   #611126;
@@ -87,7 +89,7 @@ body {
   -webkit-user-select: none;
   touch-action: none;
   border-radius: var(--blob-1);
-  box-shadow: 0 4px 24px rgba(255, 99, 57, 0.4);
+  box-shadow: 0 4px 24px rgba(255, 43, 100, 0.4);
   transition: transform 0.2s var(--ease-soft),
               box-shadow 0.2s var(--ease-soft),
               background 0.25s var(--ease-soft),
@@ -97,7 +99,7 @@ body {
 .mic-button:hover:not(:disabled) {
   transform: scale(1.04);
   border-radius: var(--blob-2);
-  box-shadow: 0 12px 36px rgba(255, 99, 57, 0.5);
+  box-shadow: 0 12px 36px rgba(255, 43, 100, 0.5);
 }
 
 .mic-button:disabled {
@@ -359,7 +361,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  box-shadow: 0 8px 32px rgba(255, 99, 57, 0.18);
+  box-shadow: 0 8px 32px rgba(255, 43, 100, 0.18);
   z-index: 100;
   transition: height 0.25s var(--ease-soft);
 }
@@ -397,7 +399,7 @@ body {
   opacity: 0;
 }
 .tab-item.active {
-  background: rgba(255, 99, 57, 0.16);
+  background: rgba(255, 43, 100, 0.16);
   color: var(--tangerine);
 }
 .tab-item.center {
@@ -408,7 +410,7 @@ body {
   background: var(--tangerine);
   border-radius: 50%;
   color: #fff;
-  box-shadow: 0 6px 18px rgba(255, 99, 57, 0.5);
+  box-shadow: 0 6px 18px rgba(255, 43, 100, 0.5);
 }
 .tab-item.center .tab-icon { font-size: 24px; }
 .tab-item.center .tab-label { display: none; }
@@ -584,7 +586,7 @@ body {
   color: #fff;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(255, 99, 57, 0.4);
+  box-shadow: 0 4px 16px rgba(255, 43, 100, 0.4);
   transition: transform 0.15s var(--ease-soft), opacity 0.15s var(--ease-soft);
 }
 .mypage-cta[aria-disabled="true"] {

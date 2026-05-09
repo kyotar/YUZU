@@ -20,7 +20,7 @@ export default function TabBar({ active, onChange, compact = false }: Props) {
         aria-label="タイムライン"
         onClick={() => onChange("timeline")}
       >
-        <span className="tab-icon" aria-hidden><ChatCircle size={24} weight="bold" /></span>
+        <span className="tab-icon" aria-hidden><ChatCircle size={24} weight="duotone" /></span>
         <span className="tab-label">タイムライン</span>
       </button>
 
@@ -31,7 +31,7 @@ export default function TabBar({ active, onChange, compact = false }: Props) {
         aria-label="はなす"
         onClick={() => onChange("speak")}
       >
-        <span className="tab-icon" aria-hidden><Microphone size={24} weight="bold" /></span>
+        <span className="tab-icon" aria-hidden><Microphone size={24} weight="duotone" /></span>
       </button>
 
       <button
@@ -41,7 +41,7 @@ export default function TabBar({ active, onChange, compact = false }: Props) {
         aria-label="マイページ"
         onClick={() => onChange("mypage")}
       >
-        <span className="tab-icon" aria-hidden><User size={24} weight="bold" /></span>
+        <span className="tab-icon" aria-hidden><User size={24} weight="duotone" /></span>
         <span className="tab-label">マイページ</span>
       </button>
     </nav>
