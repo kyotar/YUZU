@@ -1,30 +1,10 @@
 import { createClient, type RedisClientType } from "redis";
-import { STAMPS, type Stamp, isStamp } from "./stamps";
+import type { Post } from "./types";
 
-export type Post = {
-  id: string;
-  text: string;
-  createdAt: number;
-  emoji: string;
-  blob: [string, string, string];
-  sessionId: string;
-};
+export type { Post };
 
-export type PostWithReactions = Post & {
-  reactions: Record<Stamp, number>;
-  reacted: Stamp[];
-};
-
-const LIST_KEY = "posts:list";
+const postsKey = (sid: string) => `posts:${sid}`;
 const itemKey = (id: string) => `posts:item:${id}`;
-const reactionsKey = (id: string) => `posts:reactions:${id}`;
-const reactedByKey = (id: string, sid: string) => `posts:reactions:${id}:by:${sid}`;
-
-const emptyCounts = (): Record<Stamp, number> => {
-  const out = {} as Record<Stamp, number>;
-  for (const { stamp } of STAMPS) out[stamp] = 0;
-  return out;
-};
 
 declare global {
   // eslint-disable-next-line no-var
@@ -52,45 +32,30 @@ export async function createPost(p: Post): Promise<void> {
     blob: JSON.stringify(p.blob),
     sessionId: p.sessionId,
   });
-  await r.zAdd(LIST_KEY, { score: p.createdAt, value: p.id });
+  await r.zAdd(postsKey(p.sessionId), { score: p.createdAt, value: p.id });
 }
 
-export async function listPosts(sessionId: string, limit = 50): Promise<PostWithReactions[]> {
+export async function listPosts(sessionId: string, limit = 50): Promise<Post[]> {
   const r = await getClient();
-  const ids = await r.zRange(LIST_KEY, 0, limit - 1, { REV: true });
+  const ids = await r.zRange(postsKey(sessionId), 0, limit - 1, { REV: true });
   if (ids.length === 0) return [];
 
   const results = await Promise.all(
     ids.map(async (id) => {
-      const [raw, reactions, mySet] = await Promise.all([
-        r.hGetAll(itemKey(id)),
-        r.hGetAll(reactionsKey(id)),
-        r.sMembers(reactedByKey(id, sessionId)),
-      ]);
+      const raw = await r.hGetAll(itemKey(id));
       if (!raw || Object.keys(raw).length === 0) return null;
-
-      const counts = emptyCounts();
-      for (const [k, v] of Object.entries(reactions)) {
-        if (isStamp(k)) counts[k] = Number(v) || 0;
-      }
-      const reacted: Stamp[] = mySet.filter(isStamp);
-
-      const blob = parseBlob(raw.blob);
-
       return {
         id: String(raw.id ?? id),
         text: String(raw.text ?? ""),
         createdAt: Number(raw.createdAt ?? 0),
         emoji: String(raw.emoji ?? "🍑"),
-        blob,
-        sessionId: String(raw.sessionId ?? ""),
-        reactions: counts,
-        reacted,
-      } satisfies PostWithReactions;
+        blob: parseBlob(raw.blob),
+        sessionId: String(raw.sessionId ?? sessionId),
+      } satisfies Post;
     }),
   );
 
-  return results.filter((p): p is PostWithReactions => p !== null);
+  return results.filter((p): p is Post => p !== null);
 }
 
 function parseBlob(v: unknown): [string, string, string] {
@@ -105,36 +70,4 @@ function parseBlob(v: unknown): [string, string, string] {
     "52% 48% 58% 42% / 56% 44% 62% 38%",
     "44% 56% 46% 54% / 42% 58% 44% 56%",
   ];
-}
-
-export async function postExists(id: string): Promise<boolean> {
-  const r = await getClient();
-  return (await r.exists(itemKey(id))) === 1;
-}
-
-export type ToggleResult = {
-  reacted: boolean;
-  count: number;
-};
-
-export async function toggleReaction(
-  postId: string,
-  sessionId: string,
-  stamp: Stamp,
-): Promise<ToggleResult> {
-  const r = await getClient();
-  const setKey = reactedByKey(postId, sessionId);
-  const hKey = reactionsKey(postId);
-  const added = await r.sAdd(setKey, stamp);
-  if (added === 1) {
-    const count = await r.hIncrBy(hKey, stamp, 1);
-    return { reacted: true, count };
-  }
-  await r.sRem(setKey, stamp);
-  const count = await r.hIncrBy(hKey, stamp, -1);
-  if (count < 0) {
-    await r.hSet(hKey, stamp, "0");
-    return { reacted: false, count: 0 };
-  }
-  return { reacted: false, count };
 }

@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import TabBar, { type Tab } from "@/components/TabBar";
-import SpeakView from "@/components/SpeakView";
-import TimelineView, { type Post } from "@/components/TimelineView";
+import { Microphone } from "@phosphor-icons/react";
 import MyPageView from "@/components/MyPageView";
+import RecordModal from "@/components/RecordModal";
+import type { Post } from "@/lib/types";
 
 type Phase = "idle" | "recording" | "busy";
 
@@ -14,13 +14,12 @@ const FRUITS = ["🍑","🍋","🍇","🥝","🍓","🫐","🍈","🍊","🍍","
 const pickFruit = () => FRUITS[Math.floor(Math.random() * FRUITS.length)];
 
 function randomEllipse(): string {
-  const r = () => 30 + Math.round(Math.random() * 40); // 30–70 (more distorted)
+  const r = () => 30 + Math.round(Math.random() * 40);
   return `${r()}% ${r()}% ${r()}% ${r()}% / ${r()}% ${r()}% ${r()}% ${r()}%`;
 }
 const randomBlob = (): [string, string, string] => [randomEllipse(), randomEllipse(), randomEllipse()];
 
 export default function Home() {
-  const [tab, setTab] = useState<Tab>("speak");
   const [posts, setPosts] = useState<Post[]>([]);
   const [phase, setPhase] = useState<Phase>("idle");
   const [shortTap, setShortTap] = useState(false);
@@ -28,8 +27,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [myEmoji, setMyEmoji] = useState<string>("🍑");
   const [mySessionId, setMySessionId] = useState<string | null>(null);
-  const [newPostId, setNewPostId] = useState<string | null>(null);
-  const [scrolled, setScrolled] = useState(false);
+  const [recordOpen, setRecordOpen] = useState(false);
 
   const phaseRef = useRef<Phase>("idle");
   const pressStartRef = useRef<number>(0);
@@ -61,18 +59,6 @@ export default function Home() {
       })
       .catch(() => {});
   }, []);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Reset scroll state on tab change
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "auto" });
-    setScrolled(false);
-  }, [tab]);
 
   const pickRecorderMime = (): string | undefined => {
     if (typeof MediaRecorder === "undefined") return undefined;
@@ -204,10 +190,8 @@ export default function Home() {
       if (!newPost) throw new Error("保存に失敗しました");
       if (saveData?.sessionId) setMySessionId(saveData.sessionId);
       setPosts((prev) => [newPost, ...prev]);
-      setNewPostId(newPost.id);
       setStatusMsg(null);
-      // Auto-jump to timeline so the user sees their new post
-      setTab("timeline");
+      setRecordOpen(false);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "エラーが発生しました");
       setStatusMsg(null);
@@ -218,7 +202,7 @@ export default function Home() {
 
   return (
     <main className="app-shell">
-      <header className="app-header" data-hidden={scrolled}>
+      <header className="app-header">
         <svg className="app-logo" viewBox="0 0 785 160" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="YUZU">
           <path d="M68.3733 24.96C35.52 27.3066 11.7333 54.2933 10.9867 90.3466C10.7733 106.133 16.96 125.867 29.9733 138.667C39.1467 147.733 51.7333 153.387 66.1333 156.8C71.68 158.08 80.8533 158.613 89.7066 157.013C95.68 156.053 102.08 154.24 106.987 152.853C119.467 149.227 128.107 146.88 135.893 136.747C149.227 119.36 153.067 93.2266 146.347 70.4C141.867 55.4666 133.76 43.9466 116.267 32.8533L68.3733 24.96Z" fill="#F5D84A"/>
           <path d="M68.48 24.8533C79.4666 11.9467 87.8933 4.16 101.653 2.45334C112.32 1.06667 124.907 1.81334 142.613 4.16C144.213 4.37334 143.36 6.18667 143.04 7.04C138.773 18.4533 129.813 28.48 116.907 32.8533C106.56 35.52 92.5867 32.1067 69.12 25.3867L68.48 24.8533Z" fill="#2D5015"/>
@@ -229,27 +213,28 @@ export default function Home() {
         </svg>
       </header>
 
-      {tab === "speak" && (
-        <SpeakView
-          phase={phase}
-          shortTap={shortTap}
-          statusMsg={statusMsg}
-          error={error}
-          onPressStart={handlePressStart}
-          onPressEnd={handlePressEnd}
-          onPressCancel={handlePressCancel}
-        />
-      )}
+      <MyPageView myEmoji={myEmoji} posts={posts} mySessionId={mySessionId} />
 
-      {tab === "timeline" && (
-        <TimelineView posts={posts} newPostId={newPostId} />
-      )}
+      <button
+        type="button"
+        className="mic-fab"
+        aria-label="録音を開く"
+        onClick={() => setRecordOpen(true)}
+      >
+        <Microphone size={28} weight="fill" color="#fff" />
+      </button>
 
-      {tab === "mypage" && (
-        <MyPageView myEmoji={myEmoji} posts={posts} mySessionId={mySessionId} />
-      )}
-
-      <TabBar active={tab} onChange={setTab} compact={scrolled} />
+      <RecordModal
+        open={recordOpen}
+        onClose={() => setRecordOpen(false)}
+        phase={phase}
+        shortTap={shortTap}
+        statusMsg={statusMsg}
+        error={error}
+        onPressStart={handlePressStart}
+        onPressEnd={handlePressEnd}
+        onPressCancel={handlePressCancel}
+      />
     </main>
   );
 }

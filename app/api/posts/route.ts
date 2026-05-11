@@ -62,14 +62,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "kv_error" }, { status: 500 });
   }
 
-  const res = NextResponse.json({
-    post: { ...post, reactions: emptyCounts(), reacted: [] },
-    sessionId: sid,
-  });
+  const res = NextResponse.json({ post, sessionId: sid });
   if (isNew) setSessionCookie(res, sid);
   return res;
-}
-
-function emptyCounts() {
-  return { "🍑": 0, "🍋": 0, "🌱": 0, "🫐": 0, "🍒": 0 };
 }

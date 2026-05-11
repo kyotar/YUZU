@@ -360,78 +360,62 @@ body {
 }
 .app-logo { height: 28px; width: auto; display: block; }
 
-/* ===== Tab bar (Liquid Glass) ===== */
-.tab-bar {
+/* ===== Mic FAB ===== */
+.mic-fab {
   position: fixed;
-  left: 50%;
-  bottom: calc(20px + env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  width: calc(100% - 32px);
-  max-width: 380px;
-  height: 68px;
-  padding: 0 14px;
-  background: rgba(245, 216, 74, 0.2);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid rgba(245, 216, 74, 0.4);
-  border-radius: 999px;
+  bottom: calc(32px + env(safe-area-inset-bottom));
+  right: 24px;
+  width: 72px;
+  height: 72px;
+  background: var(--yuzu-zest);
+  border: none;
+  border-radius: 50% 45% 55% 48% / 52% 50% 45% 55%;
   display: flex;
-  align-items: center;
-  justify-content: space-around;
-  box-shadow: 0 8px 32px rgba(232, 160, 32, 0.1);
-  z-index: 100;
-  transition: height 0.25s var(--ease-soft);
-}
-.tab-bar[data-compact="true"] { height: 56px; }
-
-.tab-item {
-  display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: var(--text-xs);
-  color: var(--ink-secondary);
-  background: transparent;
-  border: none;
+  font-size: 28px;
+  box-shadow: 0 4px 24px rgba(232, 160, 32, 0.5);
   cursor: pointer;
-  flex: 1;
-  max-width: 96px;
-  transition: background 0.2s var(--ease-soft), color 0.2s var(--ease-soft);
+  z-index: 100;
+  transition: transform 0.2s ease;
 }
-.tab-item .tab-icon { font-size: 20px; line-height: 1; }
-.tab-item .tab-label {
-  overflow: hidden;
-  max-height: 16px;
-  opacity: 1;
-  font-family: 'Unbounded', var(--font-display), sans-serif;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  transition: max-height 0.25s var(--ease-soft), opacity 0.2s var(--ease-soft);
+.mic-fab:active {
+  transform: scale(0.95);
 }
-.tab-bar[data-compact="true"] .tab-item .tab-label {
-  max-height: 0;
-  opacity: 0;
+
+/* ===== Record modal ===== */
+.record-modal {
+  position: fixed;
+  inset: 0;
+  background: var(--yuzu-white);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  padding-top: calc(env(safe-area-inset-top) + 16px);
+  animation: fadeIn 0.2s var(--ease-soft);
 }
-.tab-item.active {
-  background: rgba(232, 160, 32, 0.12);
-  color: var(--yuzu-zest);
-}
-.tab-item.center {
-  flex: 0 0 auto;
-  width: 56px;
-  height: 56px;
-  padding: 0;
-  background: var(--yuzu-zest);
+.record-modal-close {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 12px);
+  right: 16px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  color: #fff;
-  box-shadow: 0 4px 20px rgba(232, 160, 32, 0.5);
+  border: 1px solid var(--surface-border);
+  background: var(--surface-card);
+  color: var(--ink);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.tab-item.center .tab-icon { font-size: 24px; }
-.tab-item.center .tab-label { display: none; }
-.tab-item.center.active { background: var(--yuzu-zest); color: #fff; }
+.record-modal-close:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
 
 /* ===== Speak view ===== */
 .speak-view {
@@ -538,23 +522,6 @@ body {
   100% { transform: scale(2.2); opacity: 0; }
 }
 
-/* ===== Timeline view ===== */
-.timeline-view {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 0 20px;
-  max-width: 640px;
-  margin: 0 auto;
-}
-.timeline-empty {
-  color: var(--ink-muted);
-  font-size: var(--text-sm);
-  text-align: center;
-  line-height: 1.8;
-  margin: 64px 0;
-}
-
 /* ===== Post card emphasis (more distorted ellipse) ===== */
 .post-card { padding: 18px 22px; }
 .post-time {
@@ -568,18 +535,11 @@ body {
 .mypage-view {
   display: flex;
   flex-direction: column;
-  padding: 24px 20px 32px;
+  padding: 24px 20px calc(140px + env(safe-area-inset-bottom));
   gap: 24px;
   max-width: 640px;
   margin: 0 auto;
 }
-.mypage-title {
-  font-size: var(--text-xl);
-  color: var(--ink);
-  text-align: center;
-  margin: 0;
-}
-
 .mypage-profile {
   display: flex;
   flex-direction: column;
@@ -633,11 +593,8 @@ body {
 
 .mypage-stats {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-}
-@media (max-width: 520px) {
-  .mypage-stats { grid-template-columns: repeat(2, 1fr); }
 }
 .mypage-stat-card {
   background: var(--surface-card);

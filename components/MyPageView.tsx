@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import SentimentChart, { SentimentPoint } from "./SentimentChart";
-import { type Post } from "./TimelineView";
+import type { Post } from "@/lib/types";
 import {
   getDaysSinceRegistered,
   getNickname,
@@ -11,11 +11,9 @@ import {
   setNickname as persistNickname,
 } from "@/lib/userClient";
 
-type MyPost = Post & { sessionId?: string };
-
 type Props = {
   myEmoji: string;
-  posts: MyPost[];
+  posts: Post[];
   mySessionId: string | null;
 };
 
@@ -37,7 +35,7 @@ const formatTimeLabel = (ts: number): string => {
   return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-const calcStreak = (posts: MyPost[]): number => {
+const calcStreak = (posts: Post[]): number => {
   if (posts.length === 0) return 0;
   const days = new Set(posts.map((p) => dateKey(p.createdAt)));
   let streak = 0;
@@ -47,11 +45,6 @@ const calcStreak = (posts: MyPost[]): number => {
     cur.setDate(cur.getDate() - 1);
   }
   return streak;
-};
-
-const formatSpoken = (count: number): string => {
-  const minutes = Math.round((count * 30) / 60);
-  return minutes <= 0 ? "1分未満" : `約${minutes}分`;
 };
 
 export default function MyPageView({ myEmoji, posts, mySessionId }: Props) {
@@ -70,8 +63,8 @@ export default function MyPageView({ myEmoji, posts, mySessionId }: Props) {
     setHydrated(true);
   }, [myEmoji]);
 
-  const myPosts = useMemo<MyPost[]>(() => {
-    if (!mySessionId) return [];
+  const myPosts = useMemo<Post[]>(() => {
+    if (!mySessionId) return posts;
     return posts.filter((p) => p.sessionId === mySessionId);
   }, [posts, mySessionId]);
 
@@ -122,10 +115,6 @@ export default function MyPageView({ myEmoji, posts, mySessionId }: Props) {
       .sort((a, b) => a.date.localeCompare(b.date));
   }, [myPosts, cache]);
 
-  const totalChars = useMemo(
-    () => myPosts.reduce((s, p) => s + (p.text?.length ?? 0), 0),
-    [myPosts]
-  );
   const streak = useMemo(() => calcStreak(myPosts), [myPosts]);
 
   const startEdit = () => { setDraft(nickname); setEditing(true); };
@@ -140,10 +129,6 @@ export default function MyPageView({ myEmoji, posts, mySessionId }: Props) {
 
   return (
     <section className="mypage-view">
-      <h2 className="mypage-title font-display">
-        <span aria-hidden>{myEmoji}</span> わたしの畑
-      </h2>
-
       <div className="mypage-profile">
         <div className="mypage-avatar" aria-hidden>{myEmoji}</div>
         <div className="mypage-nickname-row">
@@ -177,22 +162,12 @@ export default function MyPageView({ myEmoji, posts, mySessionId }: Props) {
         <div className="mypage-stat-card">
           <span className="mypage-stat-icon">🎤</span>
           <span className="mypage-stat-value">{myPosts.length}</span>
-          <span className="mypage-stat-label">つぶやき</span>
-        </div>
-        <div className="mypage-stat-card">
-          <span className="mypage-stat-icon">⏱️</span>
-          <span className="mypage-stat-value">{formatSpoken(myPosts.length)}</span>
-          <span className="mypage-stat-label">はなした</span>
-        </div>
-        <div className="mypage-stat-card">
-          <span className="mypage-stat-icon">📝</span>
-          <span className="mypage-stat-value">{totalChars}</span>
-          <span className="mypage-stat-label">総文字</span>
+          <span className="mypage-stat-label">個</span>
         </div>
         <div className="mypage-stat-card">
           <span className="mypage-stat-icon">🔥</span>
           <span className="mypage-stat-value">{streak}</span>
-          <span className="mypage-stat-label">連続日</span>
+          <span className="mypage-stat-label">日連続</span>
         </div>
       </div>
 
@@ -205,10 +180,10 @@ export default function MyPageView({ myEmoji, posts, mySessionId }: Props) {
       </section>
 
       <section className="mypage-section">
-        <h4 className="mypage-section-title">わたしのつぶやき</h4>
+        <h4 className="mypage-section-title">投稿一覧</h4>
         <div className="mypage-post-list">
           {myPosts.length === 0 && (
-            <p className="mypage-empty">まだ畑は空っぽ。<br />最初の声を植えよう。</p>
+            <p className="mypage-empty">まだ声がありません。<br />最初の声を植えよう。</p>
           )}
           {myPosts.map((p) => (
             <article key={p.id} className="post-card mypage-post-card">
