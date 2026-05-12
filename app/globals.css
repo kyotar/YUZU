@@ -384,6 +384,10 @@ body {
 }
 
 /* ===== Record modal ===== */
+/*
+ * FAB center: right=24+36=60px from right, bottom=32+36=68px from bottom (+ safe-area).
+ * clip-path origin tracks the FAB so the circle appears to expand from / collapse into it.
+ */
 .record-modal {
   position: fixed;
   inset: 0;
@@ -392,8 +396,55 @@ body {
   display: flex;
   flex-direction: column;
   padding-top: calc(env(safe-area-inset-top) + 16px);
-  animation: fadeIn 0.2s var(--ease-soft);
 }
+
+/* expand from FAB */
+.record-modal[data-anim="opening"] {
+  animation: modal-expand 0.42s var(--ease-organic) forwards;
+}
+/* content fades in slightly after the circle opens */
+.record-modal[data-anim="opening"] > * {
+  animation: content-appear 0.22s ease 0.22s both;
+}
+
+/* fully open — no animation, just sits there */
+.record-modal[data-anim="open"] > * {
+  opacity: 1;
+}
+
+/* collapse back into FAB */
+.record-modal[data-anim="closing"] {
+  animation: modal-collapse 0.3s var(--ease-soft) forwards;
+}
+.record-modal[data-anim="closing"] > * {
+  animation: content-disappear 0.14s ease forwards;
+}
+
+@keyframes modal-expand {
+  from {
+    clip-path: circle(36px at calc(100% - 60px) calc(100% - 68px - env(safe-area-inset-bottom, 0px)));
+  }
+  to {
+    clip-path: circle(150vmax at calc(100% - 60px) calc(100% - 68px - env(safe-area-inset-bottom, 0px)));
+  }
+}
+@keyframes modal-collapse {
+  from {
+    clip-path: circle(150vmax at calc(100% - 60px) calc(100% - 68px - env(safe-area-inset-bottom, 0px)));
+  }
+  to {
+    clip-path: circle(36px at calc(100% - 60px) calc(100% - 68px - env(safe-area-inset-bottom, 0px)));
+  }
+}
+@keyframes content-appear {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes content-disappear {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
 .record-modal-close {
   position: absolute;
   top: calc(env(safe-area-inset-top) + 12px);

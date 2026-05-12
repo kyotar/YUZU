@@ -1,5 +1,6 @@
 "use client";
 
+import { Microphone } from "@phosphor-icons/react";
 import FloatingDots from "./FloatingDots";
 
 type Phase = "idle" | "recording" | "busy";
@@ -61,7 +62,7 @@ export default function SpeakView({
             onTouchCancel={onPressCancel}
             onContextMenu={(e) => e.preventDefault()}
           >
-            {isBusy ? "🌱" : "🎤"}
+            {isBusy ? "🌱" : <Microphone size={36} weight="fill" />}
           </button>
         </div>
       </div>
