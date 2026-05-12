@@ -19,6 +19,7 @@ type Props = {
   shortTap: boolean;
   statusMsg: string | null;
   error: string | null;
+  hint: string | null;
   onPressStart: (e: React.MouseEvent | React.TouchEvent) => void;
   onPressEnd: () => void;
   onPressCancel: () => void;
@@ -31,6 +32,7 @@ export default function RecordModal({
   shortTap,
   statusMsg,
   error,
+  hint,
   onPressStart,
   onPressEnd,
   onPressCancel,
@@ -108,6 +110,7 @@ export default function RecordModal({
         shortTap={shortTap}
         statusMsg={statusMsg}
         error={error}
+        hint={hint}
         onPressStart={onPressStart}
         onPressEnd={onPressEnd}
         onPressCancel={onPressCancel}

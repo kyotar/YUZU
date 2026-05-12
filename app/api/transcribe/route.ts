@@ -35,5 +35,6 @@ export async function POST(req: NextRequest) {
   }
 
   const data = await res.json();
-  return NextResponse.json({ text: data.text ?? "" });
+  const cleanText = ((data.text as string | undefined) ?? "").replace(/\[.*?\]/g, "").trim();
+  return NextResponse.json({ text: cleanText });
 }

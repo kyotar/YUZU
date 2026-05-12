@@ -10,6 +10,7 @@ type Props = {
   shortTap: boolean;
   statusMsg: string | null;
   error: string | null;
+  hint: string | null;
   onPressStart: (e: React.MouseEvent | React.TouchEvent) => void;
   onPressEnd: () => void;
   onPressCancel: () => void;
@@ -20,6 +21,7 @@ export default function SpeakView({
   shortTap,
   statusMsg,
   error,
+  hint,
   onPressStart,
   onPressEnd,
   onPressCancel,
@@ -49,6 +51,9 @@ export default function SpeakView({
           </div>
         )}
         <div className="mic-wrap" style={{ position: "relative", zIndex: 1 }}>
+          <p className="speak-hint" data-show={hint ? "true" : "false"} aria-live="polite">
+            {hint ?? ""}
+          </p>
           <button
             aria-label="長押しで録音"
             aria-pressed={isRecording}

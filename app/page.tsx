@@ -25,11 +25,20 @@ export default function Home() {
   const [shortTap, setShortTap] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [hint, setHint] = useState<string | null>(null);
   const [myEmoji, setMyEmoji] = useState<string>("🍑");
   const [mySessionId, setMySessionId] = useState<string | null>(null);
   const [recordOpen, setRecordOpen] = useState(false);
 
   const phaseRef = useRef<Phase>("idle");
+  const hintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showHint = (msg: string) => {
+    if (hintTimerRef.current) clearTimeout(hintTimerRef.current);
+    setHint(msg);
+    hintTimerRef.current = setTimeout(() => setHint(null), 2000);
+  };
+
   const pressStartRef = useRef<number>(0);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -170,7 +179,8 @@ export default function Home() {
       if (!res.ok) throw new Error(data?.error || "文字起こしに失敗しました");
 
       const text: string = data?.text ?? "";
-      if (!text.trim()) { setError("声を聴き取れなかった"); return; }
+      if (text === "") { showHint("声が聞こえなかったよ。もう一度話してみて。"); return; }
+      if (text.length < 5) { showHint("もう少し話してみて。"); return; }
 
       const blobShape = randomBlob();
       const saveRes = await fetch("/api/posts", {
@@ -231,6 +241,7 @@ export default function Home() {
         shortTap={shortTap}
         statusMsg={statusMsg}
         error={error}
+        hint={hint}
         onPressStart={handlePressStart}
         onPressEnd={handlePressEnd}
         onPressCancel={handlePressCancel}
