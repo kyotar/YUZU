@@ -6,7 +6,7 @@ import MyPageView from "@/components/MyPageView";
 import RecordModal from "@/components/RecordModal";
 import type { Post } from "@/lib/types";
 
-type Phase = "idle" | "recording" | "busy";
+type Phase = "idle" | "recording" | "busy" | "complete";
 
 const EMOJI_KEY = "yuzu-emoji";
 const MIN_RECORD_MS = 300;
@@ -29,6 +29,8 @@ export default function Home() {
   const [myEmoji, setMyEmoji] = useState<string>("🍑");
   const [mySessionId, setMySessionId] = useState<string | null>(null);
   const [recordOpen, setRecordOpen] = useState(false);
+  const [lastPost, setLastPost] = useState<Post | null>(null);
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
 
   const phaseRef = useRef<Phase>("idle");
   const hintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -43,6 +45,8 @@ export default function Home() {
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
 
   const setPhaseSync = (p: Phase) => {
     phaseRef.current = p;
@@ -84,6 +88,36 @@ export default function Home() {
     return undefined;
   };
 
+  const setupAnalyser = (stream: MediaStream) => {
+    try {
+      const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (!Ctx) return;
+      const ctx = new Ctx();
+      ctx.resume?.();
+      const source = ctx.createMediaStreamSource(stream);
+      const node = ctx.createAnalyser();
+      node.fftSize = 32;
+      source.connect(node);
+      audioCtxRef.current = ctx;
+      analyserRef.current = node;
+      setAnalyser(node);
+    } catch (err) {
+      console.warn("AudioContext setup failed", err);
+    }
+  };
+
+  const teardownAnalyser = () => {
+    try {
+      analyserRef.current?.disconnect();
+    } catch {}
+    try {
+      audioCtxRef.current?.close();
+    } catch {}
+    analyserRef.current = null;
+    audioCtxRef.current = null;
+    setAnalyser(null);
+  };
+
   const startMediaRecorder = async (): Promise<boolean> => {
     try {
       if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
@@ -93,6 +127,7 @@ export default function Home() {
       }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
+      setupAnalyser(stream);
       const mime = pickRecorderMime();
       const mr = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
       chunksRef.current = [];
@@ -115,6 +150,7 @@ export default function Home() {
       mr.onstop = () => {
         streamRef.current?.getTracks().forEach((t) => t.stop());
         streamRef.current = null;
+        teardownAnalyser();
         resolve(new Blob(chunksRef.current, { type: mr.mimeType || "audio/webm" }));
         recorderRef.current = null;
       };
@@ -127,6 +163,7 @@ export default function Home() {
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
     recorderRef.current = null;
+    teardownAnalyser();
   };
 
   const handlePressStart = async (e: React.MouseEvent | React.TouchEvent) => {
@@ -179,8 +216,18 @@ export default function Home() {
       if (!res.ok) throw new Error(data?.error || "文字起こしに失敗しました");
 
       const text: string = data?.text ?? "";
-      if (text === "") { showHint("声が聞こえなかったよ。もう一度話してみて。"); return; }
-      if (text.length < 5) { showHint("もう少し話してみて。"); return; }
+      if (text === "") {
+        showHint("声が聞こえなかったよ。もう一度話してみて。");
+        setStatusMsg(null);
+        setPhaseSync("idle");
+        return;
+      }
+      if (text.length < 5) {
+        showHint("もう少し話してみて。");
+        setStatusMsg(null);
+        setPhaseSync("idle");
+        return;
+      }
 
       const blobShape = randomBlob();
       const saveRes = await fetch("/api/posts", {
@@ -201,13 +248,20 @@ export default function Home() {
       if (saveData?.sessionId) setMySessionId(saveData.sessionId);
       setPosts((prev) => [newPost, ...prev]);
       setStatusMsg(null);
-      setRecordOpen(false);
+      setLastPost(newPost);
+      setPhaseSync("complete");
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "エラーが発生しました");
       setStatusMsg(null);
-    } finally {
       setPhaseSync("idle");
     }
+  };
+
+  const handleCloseModal = () => {
+    if (phaseRef.current !== "idle" && phaseRef.current !== "complete") return;
+    setRecordOpen(false);
+    setPhaseSync("idle");
+    setLastPost(null);
   };
 
   return (
@@ -236,12 +290,15 @@ export default function Home() {
 
       <RecordModal
         open={recordOpen}
-        onClose={() => setRecordOpen(false)}
+        onClose={handleCloseModal}
         phase={phase}
         shortTap={shortTap}
         statusMsg={statusMsg}
         error={error}
         hint={hint}
+        analyser={analyser}
+        lastPost={lastPost}
+        myEmoji={myEmoji}
         onPressStart={handlePressStart}
         onPressEnd={handlePressEnd}
         onPressCancel={handlePressCancel}

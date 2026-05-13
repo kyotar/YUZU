@@ -387,7 +387,13 @@ body {
 .record-modal {
   position: fixed;
   inset: 0;
-  background: var(--yuzu-white);
+  background: linear-gradient(
+    160deg,
+    #F5D84A 0%,
+    #E8A020 60%,
+    #D4880A 100%
+  );
+  color: #fff;
   z-index: 200;
   display: flex;
   flex-direction: column;
@@ -405,26 +411,32 @@ body {
 }
 
 /* ── Flying mic button ──
- * Centered at (50vw, 50vh) via top/left + transform.
- * JS sets --fly-dx/--fly-dy (offset from center to FAB center in px)
- * and --fly-scale (FAB size / FLY_SIZE).
+ * Anchored at the same position as .mic-button-large (bottom-center of modal).
+ * JS sets --fly-dx/--fly-dy (offset from this rest position to FAB center)
+ * and --fly-scale (FAB size / 96px).
  */
 .rm-fly-mic {
   position: fixed;
-  top: 50%;
   left: 50%;
-  width: 140px;
-  height: 140px;
-  background: var(--yuzu-zest);
-  border-radius: var(--blob-1);
-  box-shadow: 0 4px 24px rgba(232, 160, 32, 0.5);
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  width: 96px;
+  height: 96px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--yuzu-zest);
   pointer-events: none;
   opacity: 0;
+  transform: translateX(-50%);
   z-index: 202;
+}
+
+/* ── Measuring (off-screen probe, no flash) ── */
+.record-modal[data-anim="measuring"] {
+  visibility: hidden;
 }
 
 /* ── Opening ── */
@@ -432,10 +444,11 @@ body {
   animation: rm-flash-in 0.48s ease forwards;
 }
 .record-modal[data-anim="opening"] .rm-fly-mic {
-  animation: rm-fly-to-center 0.48s var(--ease-organic) forwards;
+  animation: rm-fly-to-bottom 0.48s var(--ease-organic) forwards;
 }
 .record-modal[data-anim="opening"] .record-modal-close,
-.record-modal[data-anim="opening"] .speak-view {
+.record-modal[data-anim="opening"] .speak-view,
+.record-modal[data-anim="opening"] .complete-view {
   visibility: hidden;
 }
 
@@ -446,13 +459,15 @@ body {
   pointer-events: none;
 }
 .record-modal[data-anim="open"] .record-modal-close,
-.record-modal[data-anim="open"] .speak-view {
+.record-modal[data-anim="open"] .speak-view,
+.record-modal[data-anim="open"] .complete-view {
   animation: content-appear 0.2s ease forwards;
 }
 
 /* ── Closing ── */
 .record-modal[data-anim="closing"] .record-modal-close,
-.record-modal[data-anim="closing"] .speak-view {
+.record-modal[data-anim="closing"] .speak-view,
+.record-modal[data-anim="closing"] .complete-view {
   visibility: hidden;
 }
 .record-modal[data-anim="closing"] .rm-flash {
@@ -476,44 +491,50 @@ body {
   100% { opacity: 1; }
 }
 
-@keyframes rm-fly-to-center {
+@keyframes rm-fly-to-bottom {
   from {
     opacity: 1;
     background: var(--yuzu-zest);
+    color: #fff;
     transform: translate(
       calc(-50% + var(--fly-dx, 0px)),
-      calc(-50% + var(--fly-dy, 0px))
-    ) scale(var(--fly-scale, 0.51));
+      var(--fly-dy, 0px)
+    ) scale(var(--fly-scale, 0.75));
   }
   75% {
     opacity: 1;
-    background: var(--yuzu-yellow);
-    transform: translate(-50%, -50%) scale(1);
+    background: #fff;
+    color: var(--yuzu-zest);
+    transform: translateX(-50%) scale(1);
   }
   100% {
     opacity: 0;
-    background: var(--yuzu-yellow);
-    transform: translate(-50%, -50%) scale(1);
+    background: #fff;
+    color: var(--yuzu-zest);
+    transform: translateX(-50%) scale(1);
   }
 }
 @keyframes rm-fly-to-fab {
   from {
     opacity: 0;
-    background: var(--yuzu-yellow);
-    transform: translate(-50%, -50%) scale(1);
+    background: #fff;
+    color: var(--yuzu-zest);
+    transform: translateX(-50%) scale(1);
   }
   20% {
     opacity: 1;
-    background: var(--yuzu-yellow);
-    transform: translate(-50%, -50%) scale(1);
+    background: #fff;
+    color: var(--yuzu-zest);
+    transform: translateX(-50%) scale(1);
   }
   100% {
     opacity: 1;
     background: var(--yuzu-zest);
+    color: #fff;
     transform: translate(
       calc(-50% + var(--fly-dx, 0px)),
-      calc(-50% + var(--fly-dy, 0px))
-    ) scale(var(--fly-scale, 0.51));
+      var(--fly-dy, 0px)
+    ) scale(var(--fly-scale, 0.75));
   }
 }
 
@@ -525,46 +546,48 @@ body {
 .record-modal-close {
   position: absolute;
   top: calc(env(safe-area-inset-top) + 12px);
-  right: 16px;
+  left: 16px;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid var(--surface-border);
-  background: var(--surface-card);
-  color: var(--ink);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
   font-size: 22px;
   line-height: 1;
   cursor: pointer;
-  z-index: 1;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 .record-modal-close:disabled {
   opacity: 0.3;
   cursor: not-allowed;
 }
 
-/* ===== Speak view ===== */
+/* ===== Speak view (modal layout) ===== */
 .speak-view {
+  position: relative;
+  flex: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: calc(100dvh - 180px);
-  padding: 0 20px;
-  position: relative;
+  padding: 24px 20px 0;
+  color: #fff;
 }
-.speak-guide {
-  margin-top: 8%;
+.speak-top {
+  margin: 24px 0 0;
   font-size: var(--text-lg);
-  color: var(--ink);
+  color: #fff;
   letter-spacing: 0.04em;
   text-align: center;
   font-weight: 500;
-  opacity: 1;
-  transition: opacity 0.3s var(--ease-soft);
+  min-height: 1.6em;
 }
-.speak-guide[data-hidden="true"] { opacity: 0; }
 .speak-stage {
   position: relative;
   flex: 1;
@@ -572,30 +595,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 320px;
+  min-height: 240px;
 }
-.speak-status {
-  margin-top: 8px;
-  margin-bottom: 24px;
-  font-size: var(--text-sm);
-  color: var(--ink-secondary);
-  text-align: center;
-  min-height: 1.4em;
-  letter-spacing: 0.02em;
-}
-.speak-status.error { color: var(--yuzu-zest); }
 .speak-hint {
   position: absolute;
-  bottom: calc(100% + 12px);
+  bottom: 12%;
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
   font-size: var(--text-sm);
-  color: var(--ink);
-  background: rgba(255, 255, 255, 0.92);
-  padding: 6px 12px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 6px 14px;
   border-radius: 999px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s var(--ease-soft);
@@ -603,7 +615,52 @@ body {
 }
 .speak-hint[data-show="true"] { opacity: 1; }
 
-/* ===== Floating dots ===== */
+.speak-bottom {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+}
+
+.mic-button-large {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--yuzu-zest);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  transition: box-shadow 0.2s var(--ease-soft), transform 0.2s var(--ease-soft);
+}
+.mic-button-large:active:not(:disabled) {
+  animation: mic-press 0.4s var(--ease-soft);
+}
+.mic-button-large.recording {
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.25), 0 12px 32px rgba(0, 0, 0, 0.25);
+  animation: mic-recording-pulse 1.4s var(--ease-soft) infinite;
+}
+.mic-button-large:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+@keyframes mic-press {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(0.93); }
+  100% { transform: scale(1); }
+}
+@keyframes mic-recording-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
+}
+
+/* ===== Floating dots (modal idle) ===== */
 .dots-layer {
   position: absolute;
   inset: 0;
@@ -614,58 +671,128 @@ body {
 .dot {
   position: absolute;
   border-radius: 50%;
+  background: #fff;
   opacity: 0.5;
   will-change: transform, opacity;
-  animation: float-dot var(--dot-dur, 5s) var(--ease-soft) var(--dot-delay, 0s) infinite;
-}
-.dots-layer[data-phase="recording"] .dot {
-  animation: dot-converge var(--dot-dur, 1.6s) var(--ease-soft) var(--dot-delay, 0s) infinite;
-}
-.dots-layer[data-phase="busy"] .dot {
-  animation: dot-collapse 0.8s var(--ease-soft) forwards;
+  animation: float-dot var(--dot-dur, 5s) ease-in-out var(--dot-delay, 0s) infinite;
 }
 
 @keyframes float-dot {
-  0%   { transform: translate(0, 0) scale(1);    opacity: 0.4; }
-  25%  { transform: translate(12px, -18px) scale(1.1); opacity: 0.6; }
-  50%  { transform: translate(-8px, -30px) scale(0.9); opacity: 0.3; }
-  75%  { transform: translate(-15px, -12px) scale(1.05); opacity: 0.5; }
-  100% { transform: translate(0, 0) scale(1);    opacity: 0.4; }
-}
-@keyframes dot-converge {
-  0%   { transform: translate(var(--from-x, 0), var(--from-y, 0)) scale(1); opacity: 0.6; }
-  100% { transform: translate(0, 0) scale(0.6); opacity: 0.9; }
-}
-@keyframes dot-collapse {
-  0%   { transform: translate(var(--from-x, 0), var(--from-y, 0)) scale(1); opacity: 0.7; }
-  100% { transform: translate(0, 0) scale(0.2); opacity: 0; }
+  0%   { transform: translate(0px, 0px) scale(1);     opacity: 0.4; }
+  25%  { transform: translate(15px, -20px) scale(1.1); opacity: 0.6; }
+  50%  { transform: translate(-10px, -35px) scale(0.9); opacity: 0.3; }
+  75%  { transform: translate(-18px, -15px) scale(1.05); opacity: 0.5; }
+  100% { transform: translate(0px, 0px) scale(1);     opacity: 0.4; }
 }
 
-/* ===== Recording rings (concentric circles around mic) ===== */
-.rings-layer {
-  position: absolute;
-  inset: 0;
+/* ===== Waveform ===== */
+.waveform {
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: none;
-  z-index: 0;
+  gap: 8px;
+  height: 96px;
+  z-index: 1;
 }
-.recording-ring {
-  position: absolute;
-  width: 140px;
-  height: 140px;
-  border: 1.5px solid var(--yuzu-zest);
+.waveform-bar {
+  width: 6px;
+  height: 12px;
+  min-height: 8px;
+  max-height: 80px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  transition: height 0.05s ease;
+}
+.waveform-bar.idle {
+  animation: idle-wave 1.2s ease-in-out infinite alternate;
+}
+@keyframes idle-wave {
+  0%, 100% { height: 12px; }
+  50%      { height: 32px; }
+}
+
+/* ===== Spinner (busy) ===== */
+.speak-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.spinner-ring {
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  opacity: 0;
-  animation: recording-ring 1.8s var(--ease-soft) infinite;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  animation: spinner-rotate 0.9s linear infinite;
 }
-.recording-ring:nth-child(1) { animation-delay: 0s; }
-.recording-ring:nth-child(2) { animation-delay: 0.45s; }
-.recording-ring:nth-child(3) { animation-delay: 0.9s; }
-@keyframes recording-ring {
-  0%   { transform: scale(1);   opacity: 0.55; }
-  100% { transform: scale(2.2); opacity: 0; }
+@keyframes spinner-rotate {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== Complete view ===== */
+.complete-view {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 24px calc(48px + env(safe-area-inset-bottom));
+  color: #fff;
+  gap: 28px;
+  z-index: 1;
+}
+.complete-title {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.02em;
+  animation: complete-appear 0.5s var(--ease-organic) both;
+}
+.complete-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  color: var(--ink);
+  border-radius: 20px;
+  padding: 22px 22px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  animation: card-slide-up 0.4s ease 0.3s forwards;
+}
+.complete-text {
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: 1.75;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.complete-back-btn {
+  background: #fff;
+  color: var(--yuzu-zest);
+  border: none;
+  padding: 14px 36px;
+  border-radius: 999px;
+  font-size: var(--text-base);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  animation: card-slide-up 0.4s ease 0.5s forwards;
+  transition: transform 0.15s var(--ease-soft);
+}
+.complete-back-btn:active { transform: scale(0.96); }
+@keyframes complete-appear {
+  0%   { opacity: 0; transform: scale(0.8) translateY(10px); }
+  60%  { transform: scale(1.05) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes card-slide-up {
+  0%   { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 /* ===== Post card emphasis (more distorted ellipse) ===== */
