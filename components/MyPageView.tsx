@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { Check, Copy } from "@phosphor-icons/react";
 import SentimentChart, { SentimentPoint } from "./SentimentChart";
 import type { Post } from "@/lib/types";
 import {
@@ -191,6 +192,7 @@ export default function MyPageView({ myEmoji, posts, mySessionId }: Props) {
                 <div className="post-emoji" aria-hidden>{p.emoji ?? myEmoji}</div>
                 <span className="post-name">{nickname}</span>
                 <time className="post-time">{formatTimeLabel(p.createdAt)}</time>
+                <CopyButton text={p.text} />
               </div>
               <div className="post-body">
                 <p className="post-text">{p.text}</p>
@@ -200,5 +202,45 @@ export default function MyPageView({ myEmoji, posts, mySessionId }: Props) {
         </div>
       </section>
     </section>
+  );
+}
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  const onClick = async () => {
+    let ok = false;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        ok = true;
+      }
+    } catch {}
+    if (!ok) {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+      } catch {}
+    }
+    if (ok) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }
+  };
+  return (
+    <button
+      type="button"
+      className={"post-copy-btn" + (copied ? " is-copied" : "")}
+      onClick={onClick}
+      aria-label={copied ? "コピーしました" : "テキストをコピー"}
+      title={copied ? "コピーしました" : "テキストをコピー"}
+    >
+      {copied ? <Check size={16} weight="bold" /> : <Copy size={16} weight="regular" />}
+    </button>
   );
 }

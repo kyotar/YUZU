@@ -211,6 +211,32 @@ body {
   white-space: nowrap;
 }
 
+.post-copy-btn {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--ink-muted);
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+  transition: background 0.15s var(--ease-soft), color 0.15s var(--ease-soft), transform 0.15s var(--ease-soft);
+}
+.post-copy-btn:hover {
+  background: var(--yuzu-cream);
+  color: var(--ink);
+}
+.post-copy-btn:active { transform: scale(0.9); }
+.post-copy-btn.is-copied {
+  color: #2ea043;
+  background: rgba(46, 160, 67, 0.12);
+}
+
 .post-body { display: block; }
 .post-text {
   margin: 0;
@@ -743,10 +769,16 @@ body {
   color: #fff;
   gap: 28px;
   z-index: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 .complete-card {
   width: 100%;
   max-width: 420px;
+  max-height: 38vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   background: #fff;
   color: var(--ink);
   border-radius: 20px;
@@ -977,7 +1009,21 @@ body {
   border-radius: var(--blob-soft-1);
   padding: 16px 12px 12px;
 }
-.sentiment-chart-wrap { width: 100%; height: 220px; }
+.sentiment-chart-wrap { width: 100%; height: 220px; position: relative; }
+.sentiment-legend {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  display: flex;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--ink-muted);
+  pointer-events: none;
+  z-index: 1;
+}
+.sentiment-legend-pos { color: #F5A623; font-weight: 600; }
+.sentiment-legend-neg { color: #5B9BD5; font-weight: 600; }
+.sentiment-legend-sep { opacity: 0.5; }
 .sentiment-empty {
   color: var(--ink-muted);
   font-size: var(--text-sm);
