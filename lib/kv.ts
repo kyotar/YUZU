@@ -33,7 +33,6 @@ export async function createPost(p: Post): Promise<void> {
     text: p.text,
     createdAt: String(p.createdAt),
     emoji: p.emoji,
-    blob: JSON.stringify(p.blob),
     sessionId: p.sessionId,
   });
   await r.zAdd(postsKey(p.sessionId), { score: p.createdAt, value: p.id });
@@ -53,25 +52,10 @@ export async function listPosts(sessionId: string, limit = 50): Promise<Post[]> 
         text: String(raw.text ?? ""),
         createdAt: Number(raw.createdAt ?? 0),
         emoji: String(raw.emoji ?? "🍑"),
-        blob: parseBlob(raw.blob),
         sessionId: String(raw.sessionId ?? sessionId),
       } satisfies Post;
     }),
   );
 
   return results.filter((p): p is Post => p !== null);
-}
-
-function parseBlob(v: unknown): [string, string, string] {
-  if (typeof v === "string") {
-    try {
-      const arr = JSON.parse(v);
-      if (Array.isArray(arr) && arr.length === 3) return arr as [string, string, string];
-    } catch {}
-  }
-  return [
-    "48% 52% 42% 58% / 49% 64% 36% 51%",
-    "52% 48% 58% 42% / 56% 44% 62% 38%",
-    "44% 56% 46% 54% / 42% 58% 44% 56%",
-  ];
 }

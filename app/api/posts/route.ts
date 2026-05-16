@@ -41,17 +41,14 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const text = typeof body?.text === "string" ? body.text.trim() : "";
   const emoji = typeof body?.emoji === "string" ? body.emoji : "🍑";
-  const blob = Array.isArray(body?.blob) && body.blob.length === 3 ? body.blob : null;
 
   if (!text) return NextResponse.json({ error: "text required" }, { status: 400 });
-  if (!blob) return NextResponse.json({ error: "blob required" }, { status: 400 });
 
   const post = {
     id: crypto.randomUUID(),
     text,
     createdAt: Date.now(),
     emoji,
-    blob: blob as [string, string, string],
     sessionId: sid,
   };
 

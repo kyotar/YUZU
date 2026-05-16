@@ -17,12 +17,6 @@ const MIN_RECORD_MS = 300;
 const FRUITS = ["🍑","🍋","🍇","🥝","🍓","🫐","🍈","🍊","🍍","🥭","🍌","🍒","🍎","🍐","🫒"];
 const pickFruit = () => FRUITS[Math.floor(Math.random() * FRUITS.length)];
 
-function randomEllipse(): string {
-  const r = () => 30 + Math.round(Math.random() * 40);
-  return `${r()}% ${r()}% ${r()}% ${r()}% / ${r()}% ${r()}% ${r()}% ${r()}%`;
-}
-const randomBlob = (): [string, string, string] => [randomEllipse(), randomEllipse(), randomEllipse()];
-
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -248,11 +242,10 @@ export default function Home() {
         return;
       }
 
-      const blobShape = randomBlob();
       const saveRes = await fetch("/api/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, emoji: myEmoji, blob: blobShape }),
+        body: JSON.stringify({ text, emoji: myEmoji }),
       });
       const saveData = await safeJson(saveRes);
       if (!saveRes.ok) {
@@ -324,7 +317,6 @@ export default function Home() {
         analyser={analyser}
         lastPost={lastPost}
         posts={posts}
-        myEmoji={myEmoji}
         onPressStart={handlePressStart}
         onPressEnd={handlePressEnd}
         onPressCancel={handlePressCancel}

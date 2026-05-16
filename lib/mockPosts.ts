@@ -1,22 +1,5 @@
 import type { Post } from "./types";
 
-const BLOB_A: [string, string, string] = [
-  "48% 52% 42% 58% / 49% 64% 36% 51%",
-  "52% 48% 58% 42% / 56% 44% 62% 38%",
-  "44% 56% 46% 54% / 42% 58% 44% 56%",
-];
-const BLOB_B: [string, string, string] = [
-  "62% 38% 54% 46% / 38% 56% 44% 62%",
-  "46% 54% 38% 62% / 58% 42% 56% 44%",
-  "54% 46% 62% 38% / 44% 58% 42% 56%",
-];
-const BLOB_C: [string, string, string] = [
-  "38% 62% 46% 54% / 52% 48% 56% 44%",
-  "56% 44% 50% 50% / 46% 54% 38% 62%",
-  "50% 50% 56% 44% / 60% 40% 48% 52%",
-];
-const BLOBS = [BLOB_A, BLOB_B, BLOB_C];
-
 // daysAgo: 何日前か（0=今日）, hour, minute
 type Seed = {
   daysAgo: number;
@@ -68,7 +51,6 @@ export function buildMockPosts(
     text: seed.text,
     createdAt: timestampFor(seed, now),
     emoji,
-    blob: BLOBS[i % BLOBS.length],
     sessionId,
   }));
   posts.sort((a, b) => b.createdAt - a.createdAt);

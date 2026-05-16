@@ -16,8 +16,8 @@ export type SentimentPoint = { date: string; score: number };
 
 type Props = { data: SentimentPoint[] };
 
-const POS_COLOR = "#F5A623";
-const NEG_COLOR = "#5B9BD5";
+const POS_COLOR = "#E8A020"; // --yuzu-zest
+const NEG_COLOR = "#1A1A2E"; // --ink
 const DOW = ["日", "月", "火", "水", "木", "金", "土"];
 
 function scoreLabel(score: number): string {

@@ -3,6 +3,5 @@ export type Post = {
   text: string;
   createdAt: number;
   emoji: string;
-  blob: [string, string, string];
   sessionId: string;
 };
