@@ -1467,12 +1467,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: calc(env(safe-area-inset-top) + 20px) 16px 16px;
+  padding: calc(env(safe-area-inset-top) + 20px) 0 16px;
   margin-bottom: 16px;
 }
 .page-header-back {
   position: absolute;
-  left: 20px;
+  left: 0;
   display: inline-flex;
   align-items: center;
   color: var(--ink-secondary);
