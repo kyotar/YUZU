@@ -12,9 +12,8 @@ type Props = {
 export default function PageHeader({ title, backHref, backLabel = "BACK" }: Props) {
   return (
     <header className="page-header">
-      <Link href={backHref} className="page-header-back font-display">
-        <ArrowLeft size={14} weight="bold" />
-        {backLabel}
+      <Link href={backHref} className="page-header-back" aria-label={backLabel}>
+        <ArrowLeft size={18} weight="bold" />
       </Link>
       <h1 className="page-header-title font-display">{title}</h1>
     </header>
