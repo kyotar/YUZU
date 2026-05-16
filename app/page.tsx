@@ -6,6 +6,7 @@ import MyPageView from "@/components/MyPageView";
 import RecordModal from "@/components/RecordModal";
 import type { Post } from "@/lib/types";
 import { buildMockPosts } from "@/lib/mockPosts";
+import { isMockMode } from "@/lib/mockReports";
 import { loadSentimentCache, saveSentimentCache } from "@/lib/userClient";
 
 type Phase = "idle" | "recording" | "busy" | "complete";
@@ -66,9 +67,7 @@ export default function Home() {
     } catch {}
     if (e) setMyEmoji(e);
 
-    const isMock = typeof window !== "undefined" &&
-      new URLSearchParams(window.location.search).get("mock") === "1";
-    if (isMock) {
+    if (isMockMode()) {
       const { posts: mockPosts, sentiments } = buildMockPosts(e ?? "🍑", "mock-session");
       setPosts(mockPosts);
       setMySessionId("mock-session");

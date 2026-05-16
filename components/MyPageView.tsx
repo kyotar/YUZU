@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check, Copy } from "@phosphor-icons/react";
 import SentimentChart, { SentimentPoint } from "./SentimentChart";
+import ReportsSection from "./ReportsSection";
 import type { Post } from "@/lib/types";
 import {
   getDaysSinceRegistered,
@@ -176,6 +177,8 @@ export default function MyPageView({ myEmoji, posts, mySessionId }: Props) {
           {analyzing && <p className="mypage-loading-hint">DECODING…</p>}
         </div>
       </section>
+
+      <ReportsSection mySessionId={mySessionId} />
 
       <section className="mypage-section">
         <h4 className="mypage-section-title font-display">RECORDS</h4>

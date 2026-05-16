@@ -205,6 +205,25 @@
   .sent-card { border: 1px solid var(--divider); padding: 16px; border-radius: var(--radius-sharp); background: #fff; }
   .sent-svg { width: 100%; height: 180px; display: block; }
 
+  /* report card / detail mock */
+  .report-card-mock { display: flex; flex-direction: column; gap: 10px; padding: 16px 14px; border: 1px solid var(--divider); border-radius: 4px; background: #fff; max-width: 280px; width: 100%; }
+  .report-card-mock .kind { font-family: var(--font-display); font-weight: 700; font-size: 10px; letter-spacing: 0.18em; color: var(--ink-muted); }
+  .report-card-mock .label { font-family: var(--font-body); font-weight: 700; font-size: var(--text-base); color: var(--ink); line-height: 1.3; }
+  .report-card-mock .headline { font-size: var(--text-sm); color: var(--ink-secondary); line-height: 1.5; margin: 0; }
+  .report-card-mock .topics { display: flex; flex-wrap: wrap; gap: 6px; }
+  .report-chip { display: inline-block; padding: 4px 10px; border: 1px solid var(--divider); border-radius: var(--radius-pill); font-family: var(--font-body); font-weight: 700; font-size: 11px; color: var(--ink-secondary); background: var(--yuzu-white); }
+  .report-detail-mock { padding: 24px; border: 1px solid var(--divider); border-radius: var(--radius-sharp); background: #fff; display: flex; flex-direction: column; gap: 24px; }
+  .report-detail-mock .title { font-family: var(--font-display); font-weight: 700; font-size: 32px; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1; margin: 0; }
+  .report-detail-mock .headline { font-weight: 700; font-size: var(--text-lg); margin: 0; }
+  .report-detail-mock .block { padding-top: 18px; border-top: 1px solid var(--divider); display: flex; flex-direction: column; gap: 8px; }
+  .report-detail-mock .h { font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing: 0.16em; color: var(--ink-muted); text-transform: uppercase; margin: 0; }
+  .report-detail-mock .body { margin: 0; font-size: var(--text-base); line-height: 1.7; }
+  .report-detail-mock .advice { font-family: var(--font-display); font-weight: 700; font-size: var(--text-xl); letter-spacing: -0.01em; padding-bottom: 6px; border-bottom: 2px solid var(--yuzu-yellow); align-self: flex-start; margin: 0; }
+  .reports-row { display: flex; gap: 12px; align-items: stretch; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+  .reports-row .report-card-mock { flex: 0 0 78%; max-width: 280px; }
+  .reports-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .reports-head .more { font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing: 0.16em; color: var(--ink-secondary); text-decoration: none; text-transform: uppercase; }
+
   /* prompts */
   .prompts { display: flex; flex-wrap: wrap; gap: 10px; }
   .prompt-chip { padding: 8px 12px; border: 1px solid var(--ink); border-radius: var(--radius-sharp); font-family: var(--font-body); font-weight: 700; font-size: var(--text-sm); background: #fff; }
@@ -492,6 +511,105 @@
           </div>
           <p class="note">ポジ＝<code>--yuzu-zest</code>、ネガ＝<code>--ink</code>。ゼロは点線。</p>
         </div>
+
+        <div class="comp" style="grid-column: 1 / -1">
+          <h4>REPORTS SECTION / MYPAGE</h4>
+          <div class="stage" style="flex-direction:column;align-items:stretch;gap:16px;min-height:0;padding:24px;background:var(--yuzu-white)">
+            <div class="reports-head">
+              <div style="font-family:var(--font-display);font-weight:700;font-size:40px;letter-spacing:0.04em;text-transform:uppercase;line-height:1">REPORT</div>
+              <a class="more" href="#">MORE →</a>
+            </div>
+            <div class="reports-row">
+              <a class="report-card-mock" href="#">
+                <div class="kind">WEEK</div>
+                <div class="label">4月3週 週次レポート</div>
+                <p class="headline">怒りを置きにいった一週間。</p>
+                <div class="topics">
+                  <span class="report-chip">仕事のミーティング</span>
+                  <span class="report-chip">家族</span>
+                  <span class="report-chip">寝不足</span>
+                </div>
+              </a>
+              <a class="report-card-mock" href="#">
+                <div class="kind">WEEK</div>
+                <div class="label">4月2週 週次レポート</div>
+                <p class="headline">凪。たまに笑った。</p>
+                <div class="topics">
+                  <span class="report-chip">散歩</span>
+                  <span class="report-chip">本</span>
+                  <span class="report-chip">同僚</span>
+                </div>
+              </a>
+              <a class="report-card-mock" href="#">
+                <div class="kind">WEEK</div>
+                <div class="label">4月1週 週次レポート</div>
+                <p class="headline">出だしから走った。疲れも残った。</p>
+                <div class="topics">
+                  <span class="report-chip">新プロジェクト</span>
+                  <span class="report-chip">通勤</span>
+                </div>
+              </a>
+              <a class="report-card-mock" href="#">
+                <div class="kind">MONTH</div>
+                <div class="label">3月 月次レポート</div>
+                <p class="headline">出すより、抱えた月。</p>
+                <div class="topics">
+                  <span class="report-chip">引っ越し</span>
+                  <span class="report-chip">別れ</span>
+                  <span class="report-chip">沈黙</span>
+                </div>
+              </a>
+            </div>
+          </div>
+          <p class="note">SENTIMENT セクションと RECORDS セクションの間に挿入。直近1か月の確定済み週／月レポートを横スクロール snap で並べる。<code>more →</code> で <code>/reports</code> 全件ページへ。</p>
+        </div>
+
+        <div class="comp" style="grid-column: 1 / -1">
+          <h4>REPORT DETAIL</h4>
+          <div class="stage" style="align-items:stretch;padding:0;background:transparent">
+            <div class="report-detail-mock">
+              <h3 class="title">4月3週 週次レポート</h3>
+              <p class="headline">怒りを置きにいった一週間。</p>
+              <div class="block">
+                <h4 class="h">SENTIMENT</h4>
+                <svg class="sent-svg" viewBox="0 0 600 140" preserveAspectRatio="none" aria-hidden>
+                  <defs>
+                    <linearGradient id="grad-r" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%"  stop-color="#E8A020" stop-opacity="0.9"/>
+                      <stop offset="50%" stop-color="#E8A020" stop-opacity="0.15"/>
+                      <stop offset="50%" stop-color="#1A1A2E" stop-opacity="0.15"/>
+                      <stop offset="100%" stop-color="#1A1A2E" stop-opacity="0.9"/>
+                    </linearGradient>
+                  </defs>
+                  <line x1="0" y1="70" x2="600" y2="70" stroke="#9A9ABA" stroke-dasharray="4 4"/>
+                  <path d="M0,60 C90,30 180,110 270,90 C360,70 450,120 540,80 L600,90 L600,70 L0,70 Z" fill="url(#grad-r)"/>
+                </svg>
+              </div>
+              <div class="block">
+                <h4 class="h">TOPICS</h4>
+                <div class="topics" style="display:flex;flex-wrap:wrap;gap:8px">
+                  <span class="report-chip">仕事のミーティング</span>
+                  <span class="report-chip">家族</span>
+                  <span class="report-chip">寝不足</span>
+                  <span class="report-chip">通勤</span>
+                </div>
+              </div>
+              <div class="block">
+                <h4 class="h">SURFACE</h4>
+                <p class="body">疲れと苛立ちが多い。短く強い言葉が増えた。</p>
+              </div>
+              <div class="block">
+                <h4 class="h">DEPTH</h4>
+                <p class="body">本当は休ませてほしい、と言えていない可能性がある。怒りの裏に「諦め」のトーンが薄く混じる。</p>
+              </div>
+              <div class="block">
+                <h4 class="h">ADVICE</h4>
+                <p class="advice">来週、一度だけ「断れ」。</p>
+              </div>
+            </div>
+          </div>
+          <p class="note">タイトル → ヘッドライン → SENTIMENT → TOPICS → SURFACE / DEPTH（罫線で区切る）→ ADVICE（Unbounded・ゆず黄の細下線で締める）。</p>
+        </div>
       </div>
     </section>
 
@@ -535,6 +653,11 @@
           <tr><td class="where">登録日数</td><td class="what en">DAY ○</td></tr>
           <tr><td class="where">音声なし</td><td class="what">声が聞こえなかった。もう一度。</td></tr>
           <tr><td class="where">短すぎ</td><td class="what">短い。もう一度。</td></tr>
+          <tr><td class="where">レポート見出し</td><td class="what en">REPORT</td></tr>
+          <tr><td class="where">レポート一覧へ</td><td class="what en">MORE →</td></tr>
+          <tr><td class="where">レポート空</td><td class="what">まだ無い。話せ。</td></tr>
+          <tr><td class="where">レポート生成失敗</td><td class="what">失敗。もう一度。</td></tr>
+          <tr><td class="where">レポート生成中</td><td class="what en">DECODING…</td></tr>
         </tbody>
       </table>
 

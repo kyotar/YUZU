@@ -11,6 +11,10 @@ declare global {
   var __yuzuRedis: RedisClientType | undefined;
 }
 
+export async function getRedis(): Promise<RedisClientType> {
+  return getClient();
+}
+
 async function getClient(): Promise<RedisClientType> {
   if (global.__yuzuRedis && global.__yuzuRedis.isOpen) return global.__yuzuRedis;
   const url = process.env.KV_REDIS_URL || process.env.REDIS_URL;
