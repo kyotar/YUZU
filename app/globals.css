@@ -265,7 +265,7 @@ body {
 /* ===== App shell / header fade ===== */
 .app-shell {
   min-height: 100dvh;
-  padding-bottom: calc(108px + env(safe-area-inset-bottom));
+  padding-bottom: calc(140px + env(safe-area-inset-bottom));
 }
 .app-header {
   position: relative;
@@ -626,6 +626,32 @@ body {
   text-align: center;
   font-weight: 500;
   min-height: 1.6em;
+}
+.speak-prompt {
+  margin: 32px 0 0;
+  text-align: center;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.speak-prompt-text {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.35;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  max-width: 18ch;
+}
+.speak-prompt-hint {
+  margin: 0;
+  font-size: var(--text-xs);
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.62);
+  text-transform: uppercase;
 }
 .speak-stage {
   position: relative;

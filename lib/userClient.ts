@@ -3,7 +3,6 @@
 // V2でSupabase Authに移行する際は、サーバー側のセッション解決をauthに差し替えるだけでよい。
 
 export const NICKNAME_KEY = "yuzu-nickname";
-export const REGISTERED_AT_KEY = "yuzu-registered-at";
 export const SENTIMENT_CACHE_KEY = "yuzu-sentiment-cache";
 
 export const FRUIT_NAMES: Record<string, string> = {
@@ -39,21 +38,6 @@ export function getNickname(emoji: string): string {
 
 export function setNickname(name: string): void {
   safeSet(NICKNAME_KEY, name.trim());
-}
-
-export function getRegisteredAt(): number {
-  const raw = safeGet(REGISTERED_AT_KEY);
-  if (raw) {
-    const n = Number(raw);
-    if (Number.isFinite(n)) return n;
-  }
-  const now = Date.now();
-  safeSet(REGISTERED_AT_KEY, String(now));
-  return now;
-}
-
-export function getDaysSinceRegistered(): number {
-  return Math.floor((Date.now() - getRegisteredAt()) / 86400000) + 1;
 }
 
 export function loadSentimentCache(): Record<string, number> {
