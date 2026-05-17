@@ -51,6 +51,11 @@ export default function SentimentChart({ data }: Props) {
       <p className="sentiment-empty">データ無し。話せ。</p>
     );
   }
+  if (data.length < 3) {
+    return (
+      <p className="sentiment-empty">声が少ない。</p>
+    );
+  }
 
   const DateTick = makeDateTick(data.map((d) => d.date));
 
