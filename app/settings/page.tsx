@@ -43,16 +43,16 @@ export default function SettingsPage() {
 
       <div className="settings-body">
         <section className="settings-section">
-          <p className="settings-section-title font-display">ACCOUNT</p>
+          <p className="settings-section-title font-display">YOU</p>
 
-          <div className="settings-row settings-row--disabled">
+          <div className="settings-row settings-row--disabled" aria-disabled="true">
             <span className="settings-row-label">プラン</span>
             <span className="settings-row-value">フリープラン</span>
             <CaretRight size={14} className="settings-row-chevron" />
           </div>
 
           <div className="settings-row" onClick={!editing ? startEdit : undefined} style={{ cursor: editing ? "default" : "pointer" }}>
-            <span className="settings-row-label">ニックネーム</span>
+            <span className="settings-row-label">NAME</span>
             {editing ? (
               <>
                 <input
@@ -82,14 +82,14 @@ export default function SettingsPage() {
         </section>
 
         <section className="settings-section">
-          <p className="settings-section-title font-display">NOTIFICATION</p>
+          <p className="settings-section-title font-display">ALERT</p>
 
-          <div className="settings-row settings-row--disabled">
+          <div className="settings-row settings-row--disabled" aria-disabled="true">
             <span className="settings-row-label">メール通知</span>
             <span className="settings-row-value">―</span>
           </div>
 
-          <div className="settings-row settings-row--disabled">
+          <div className="settings-row settings-row--disabled" aria-disabled="true">
             <span className="settings-row-label">プッシュ通知</span>
             <span className="settings-row-value">―</span>
           </div>
@@ -98,12 +98,12 @@ export default function SettingsPage() {
         <section className="settings-section">
           <p className="settings-section-title font-display">PROFILE</p>
 
-          <div className="settings-row settings-row--disabled">
+          <div className="settings-row settings-row--disabled" aria-disabled="true">
             <span className="settings-row-label">メールアドレス</span>
             <span className="settings-row-value">―</span>
           </div>
 
-          <div className="settings-row settings-row--disabled">
+          <div className="settings-row settings-row--disabled" aria-disabled="true">
             <span className="settings-row-label">ユーザーID</span>
             <span className="settings-row-value">―</span>
           </div>
@@ -112,12 +112,12 @@ export default function SettingsPage() {
         <section className="settings-section">
           <p className="settings-section-title font-display">LEGAL</p>
 
-          <div className="settings-row settings-row--disabled">
+          <div className="settings-row settings-row--disabled" aria-disabled="true">
             <span className="settings-row-label">利用規約</span>
             <CaretRight size={14} className="settings-row-chevron" />
           </div>
 
-          <div className="settings-row settings-row--disabled">
+          <div className="settings-row settings-row--disabled" aria-disabled="true">
             <span className="settings-row-label">プライバシーポリシー</span>
             <CaretRight size={14} className="settings-row-chevron" />
           </div>

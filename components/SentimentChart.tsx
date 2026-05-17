@@ -60,7 +60,7 @@ export default function SentimentChart({ data }: Props) {
   const DateTick = makeDateTick(data.map((d) => d.date));
 
   return (
-    <div className="sentiment-chart-wrap">
+    <div className="sentiment-chart-wrap" role="img" aria-label="感情スコア 7 日トレンド">
       <svg
         width="1"
         height="1"

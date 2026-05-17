@@ -122,11 +122,6 @@
   .post-card .text { margin: 10px 0 0; font-family: var(--font-body); font-weight: 400; font-size: var(--text-base); color: var(--ink); }
   .post-card .index { font-family: var(--font-display); font-weight: 700; font-size: var(--text-xs); color: var(--ink-muted); letter-spacing: 0.08em; }
 
-  /* tab bar */
-  .tabbar { display: flex; gap: 12px; padding: 12px 16px; background: rgba(250,250,245,0.72); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--surface-border); border-radius: var(--radius-pill); }
-  .tabbar button { width: 44px; height: 44px; border-radius: var(--radius-pill); border: none; background: transparent; display: grid; place-items: center; cursor: pointer; }
-  .tabbar .active { background: var(--ink); color: var(--yuzu-white); }
-
   /* buttons */
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; border-radius: 4px; border: 1px solid transparent; font-family: var(--font-display); font-weight: 700; font-size: var(--text-sm); letter-spacing: 0.08em; cursor: pointer; transition: transform .12s var(--ease-soft), background .15s var(--ease-soft), color .15s var(--ease-soft), border-color .15s var(--ease-soft), opacity .15s var(--ease-soft); -webkit-tap-highlight-color: transparent; }
   .btn:hover { transform: translateY(-1px); }
@@ -364,7 +359,7 @@
 
     <section id="components">
       <h2><span class="num">05</span>COMPONENTS</h2>
-      <p class="lead">マイクボタン・投稿カード・スタッツ・タブバー・状態ピル・感情グラフの6点。</p>
+      <p class="lead">マイクボタン・投稿カード・スタッツ・状態ピル・感情グラフの5点。</p>
 
       <div class="comp-grid">
         <div class="comp">
@@ -478,18 +473,6 @@
             </div>
           </div>
           <p class="note">罫線で区切る・連番＋タイムスタンプは Unbounded。</p>
-        </div>
-
-        <div class="comp">
-          <h4>TAB BAR / LIQUID GLASS</h4>
-          <div class="stage">
-            <div class="tabbar">
-              <button aria-label="timeline">💬</button>
-              <button class="active" aria-label="record">🎤</button>
-              <button aria-label="me">👤</button>
-            </div>
-          </div>
-          <p class="note">半透明＋<code>backdrop-filter: blur(20px)</code>。</p>
         </div>
 
         <div class="comp" style="grid-column: 1 / -1">
@@ -704,8 +687,6 @@
       <h2><span class="num">08</span>LAYOUT</h2>
       <p class="lead">左揃え・グリッド・大胆な余白の不均衡。センター寄せの和的余白は廃止。</p>
       <ul style="font-size:var(--text-sm); line-height:1.9; padding-left:18px;">
-        <li>3タブ構成（💬 タイムライン／🎤 はなす／👤 マイページ）。デフォルトは「はなす」。</li>
-        <li>タブバーは画面下の Liquid Glass 風（半透明＋blur 20px）。</li>
         <li>背景は <code>--yuzu-white</code> 単色。ゆず黄が信号として浮く構造。</li>
         <li>タッチターゲット最小 44×44。マイクボタンは 140px。</li>
         <li>テキストコントラスト比 4.5:1 以上。<code>prefers-reduced-motion</code> 対応。</li>

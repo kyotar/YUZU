@@ -49,7 +49,7 @@ export default function SpeakView({
 
   return (
     <section className="speak-view">
-      {!isIdleHero && <p className="speak-top">{status}</p>}
+      {!isIdleHero && <p className="speak-top" role="status" aria-live="polite">{status}</p>}
 
       <div className="speak-stage">
         {phase === "idle" && <FloatingDots phase={phase} />}
