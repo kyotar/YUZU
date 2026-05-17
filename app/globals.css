@@ -51,22 +51,17 @@ body {
 }
 
 /* ===== Post card ===== */
-.post-card {
+.post-card,
+.mypage-post-card {
   background: var(--surface-card);
-  border: 1.5px solid var(--surface-border);
-  border-radius: 24px;
-  box-shadow: 0px 0px 36px -16px rgba(26, 26, 46, 0.12);
-  padding: 16px 20px;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0px 0 8px 0 rgb(0 0 0 / 4%);
+  padding: 16px 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   color: var(--ink);
-  transition: transform 0.2s var(--ease-soft),
-              box-shadow 0.2s var(--ease-soft);
-}
-.post-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0px 4px 36px -8px rgba(26, 26, 46, 0.16);
 }
 .post-card.new {
   animation: post-appear 0.5s var(--ease-organic) both;
@@ -483,14 +478,14 @@ body {
   right: 24px;
   width: 72px;
   height: 72px;
-  background: var(--yuzu-zest);
+  background: var(--ink);
   border: none;
-  border-radius: 50% 45% 55% 48% / 52% 50% 45% 55%;
+  border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 28px;
-  box-shadow: 0 4px 24px rgba(232, 160, 32, 0.5);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
   cursor: pointer;
   z-index: 100;
   /* delayed fade-in when modal closes (waits for fly-mic to travel back) */
@@ -673,9 +668,9 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  border: none;
+  background: #fff;
+  color: var(--ink);
   font-size: 22px;
   line-height: 1;
   cursor: pointer;
@@ -683,11 +678,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 }
 .record-modal-close:disabled {
-  opacity: 0.3;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
@@ -1028,7 +1021,7 @@ body {
   margin-right: 6px;
   display: inline-block;
 }
-.streak-unit { font-size: 22px; font-weight: 600; }
+.streak-unit { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 
 .complete-back-btn {
   background: #fff;
@@ -1061,8 +1054,7 @@ body {
   100% { opacity: 1; transform: scale(1); }
 }
 
-/* ===== Post card emphasis (more distorted ellipse) ===== */
-.post-card { padding: 18px 22px; }
+/* ===== Post card time style ===== */
 .post-time {
   color: var(--ink-muted);
   font-size: var(--text-sm);
@@ -1107,7 +1099,7 @@ body {
   font-family: var(--font-body), sans-serif;
   font-size: 16px; /* iOS Safari ズーム抑制 */
   border: 1.5px solid var(--surface-border);
-  border-radius: 10px;
+  border-radius: 2px;
   padding: 4px 10px;
   background: var(--surface-card);
   color: var(--ink);
@@ -1121,7 +1113,7 @@ body {
   color: var(--ink-secondary);
   padding: 4px 10px;
   font-size: var(--text-xs);
-  border-radius: 999px;
+  border-radius: 2px;
   cursor: pointer;
   transition: background 0.2s var(--ease-soft);
 }
@@ -1130,45 +1122,55 @@ body {
 .mypage-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 0;
 }
 .mypage-stat-card {
-  background: var(--surface-card);
-  border: 1.5px solid var(--surface-border);
-  padding: 14px 8px;
-  border-radius: 4px;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--divider);
+  border-radius: 0;
+  padding: 20px 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
   text-align: center;
 }
-.mypage-stat-icon { font-size: 22px; }
+.mypage-stat-icon { display: none; }
 .mypage-stat-value {
   font-family: var(--font-display), 'Unbounded', sans-serif;
   font-weight: 700;
-  font-size: var(--text-lg);
+  font-size: var(--text-3xl);
+  letter-spacing: -0.02em;
+  line-height: 1;
   color: var(--ink);
-  line-height: 1.1;
+  order: 1;
 }
 .mypage-stat-label {
-  font-size: 10px;
+  order: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   color: var(--ink-muted);
-  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .mypage-section { display: flex; flex-direction: column; gap: 10px; }
 .mypage-section-title {
-  font-size: var(--text-base);
-  color: var(--ink-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 40px;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--ink);
+  padding-top: 44px;
   margin: 0;
-  letter-spacing: 0.03em;
 }
 .mypage-chart-card {
-  background: var(--surface-card);
-  border: 1.5px solid var(--surface-border);
-  border-radius: 4px;
-  padding: 16px 12px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 8px 0;
 }
 .sentiment-chart-wrap { width: 100%; height: 220px; position: relative; }
 .sentiment-legend {
@@ -1222,81 +1224,6 @@ body {
   }
 }
 
-/* =====================================================================
-   THE RECORD — 世界観刷新オーバーライド（Swiss × NIKE）
-   旧 blob / グラデ / クリームを上から潰す。
-   ===================================================================== */
-
-/* マイクボタンは正円に */
-.mic-fab,
-.mic-button-large {
-  border-radius: 9999px !important;
-  animation: none !important;
-}
-.mic-fab { background: var(--ink) !important; box-shadow: 0 4px 24px rgba(0,0,0,0.18) !important; }
-.mic-fab:active { transform: scale(0.95) !important; }
-
-/* 投稿カード：矩形・上罫線で区切る Swiss スタイル */
-.post-card,
-.mypage-post-card {
-  background: var(--surface-card) !important;
-  border: none !important;
-  border-radius: 4px !important;
-  padding: 16px 14px !important;
-  box-shadow: 0px 0 8px 0 rgb(0 0 0 / 4%) !important;
-  transform: none !important;
-}
-.post-card:hover { transform: none !important; }
-
-/* スタッツカード：左揃え・無装飾・数値巨大 */
-.mypage-stats { gap: 0 !important; grid-template-columns: repeat(3, 1fr) !important; }
-.mypage-stat-card {
-  background: transparent !important;
-  border: none !important;
-  border-top: 1px solid var(--divider) !important;
-  border-radius: 0 !important;
-  padding: 20px 6px !important;
-  align-items: center !important;
-  text-align: center !important;
-  gap: 10px !important;
-  flex-direction: column !important;
-}
-.mypage-stat-icon { display: none !important; }
-.mypage-stat-label {
-  order: 0 !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.12em !important;
-  color: var(--ink-muted) !important;
-  text-transform: uppercase !important;
-}
-.mypage-stat-value {
-  order: 1 !important;
-  font-size: var(--text-3xl) !important;
-  letter-spacing: -0.02em !important;
-  line-height: 1 !important;
-}
-
-/* セクションタイトル：英語・全大文字・ダイナミック大文字 */
-.mypage-section-title {
-  text-transform: uppercase !important;
-  letter-spacing: 0.04em !important;
-  font-size: 40px !important;
-  line-height: 1 !important;
-  font-weight: 700 !important;
-  color: var(--ink) !important;
-  padding-top: 44px;
-  margin: 0 !important;
-}
-
-/* チャートカード：矩形 */
-.mypage-chart-card {
-  background: transparent !important;
-  border: none !important;
-  border-radius: 0 !important;
-  padding: 8px 0 !important;
-}
-
 /* 完了画面の RECORDED. スタンプ */
 .complete-stamp {
   font-weight: 900;
@@ -1313,18 +1240,7 @@ body {
   100% { opacity: 1; transform: scale(1); }
 }
 
-/* 完了画面のストリーク表示も Unbounded で */
 .streak-count { font-size: var(--text-3xl); letter-spacing: -0.02em; }
-.streak-unit {
-  font-size: var(--text-xs) !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.12em !important;
-  text-transform: uppercase;
-}
-
-/* マイページのコピーボタン等の角丸も矩形寄りに */
-.mypage-edit-btn,
-.mypage-nickname-input { border-radius: 2px !important; }
 
 /* タグライン用ユーティリティ */
 .app-tagline {
