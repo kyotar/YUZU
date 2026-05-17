@@ -6,7 +6,6 @@ import SentimentChart, { SentimentPoint } from "./SentimentChart";
 import ReportsSection from "./ReportsSection";
 import type { Post } from "@/lib/types";
 import {
-  getDaysSinceRegistered,
   getNickname,
   loadSentimentCache,
   saveSentimentCache,
@@ -51,13 +50,11 @@ const calcStreak = (posts: Post[]): number => {
 export default function MyPageView({ myEmoji, posts, mySessionId }: Props) {
   const [hydrated, setHydrated] = useState(false);
   const [nickname, setNicknameState] = useState("ゲスト");
-  const [days, setDays] = useState(1);
   const [cache, setCache] = useState<Record<string, number>>({});
   const [analyzing, setAnalyzing] = useState(false);
 
   useEffect(() => {
     setNicknameState(getNickname(myEmoji));
-    setDays(getDaysSinceRegistered());
     setCache(loadSentimentCache());
     setHydrated(true);
   }, [myEmoji]);
@@ -115,6 +112,10 @@ export default function MyPageView({ myEmoji, posts, mySessionId }: Props) {
   }, [myPosts, cache]);
 
   const streak = useMemo(() => calcStreak(myPosts), [myPosts]);
+  const recordedDays = useMemo(
+    () => new Set(myPosts.map((p) => dateKey(p.createdAt))).size,
+    [myPosts],
+  );
 
   return (
     <section className="mypage-view">
@@ -128,7 +129,7 @@ export default function MyPageView({ myEmoji, posts, mySessionId }: Props) {
       <div className="mypage-stats">
         <div className="mypage-stat-card">
           <span className="mypage-stat-label font-display">DAY</span>
-          <span className="mypage-stat-value font-display">{days}</span>
+          <span className="mypage-stat-value font-display">{recordedDays}</span>
         </div>
         <div className="mypage-stat-card">
           <span className="mypage-stat-label font-display">RECORDS</span>

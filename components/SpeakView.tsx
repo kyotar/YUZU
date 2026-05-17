@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { Microphone, MicrophoneSlash } from "@phosphor-icons/react";
 import FloatingDots from "./FloatingDots";
 import Waveform from "./Waveform";
+import { pickPrompt } from "@/lib/prompts";
 
 type Phase = "idle" | "recording" | "busy" | "complete";
 
@@ -33,17 +35,28 @@ export default function SpeakView({
 }: Props) {
   const isRecording = phase === "recording";
   const isBusy = phase === "busy";
+  const [prompt] = useState(() => pickPrompt());
+
+  const isIdleHero =
+    phase === "idle" && !permissionDenied && !error && !shortTap;
 
   const status =
     permissionDenied ? "マイクを許可して。" :
     error ? error :
     isBusy ? (statusMsg ?? "DECODING.") :
     isRecording ? "RECORDING." :
-    shortTap ? "短い。もう一度。" : "長押し。話せ。";
+    shortTap ? "短い。もう一度。" : "";
 
   return (
     <section className="speak-view">
-      <p className="speak-top">{status}</p>
+      {isIdleHero ? (
+        <div className="speak-prompt">
+          <p className="speak-prompt-text">{prompt}</p>
+          <p className="speak-prompt-hint">長押し。話せ。</p>
+        </div>
+      ) : (
+        <p className="speak-top">{status}</p>
+      )}
 
       <div className="speak-stage">
         {phase === "idle" && <FloatingDots phase={phase} />}
