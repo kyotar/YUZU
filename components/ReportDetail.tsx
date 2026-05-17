@@ -51,7 +51,7 @@ export default function ReportDetail({ periodKey }: Props) {
 
   return (
     <main className="report-detail-page">
-      <PageHeader title={labelFromKey(periodKey)} backHref="/reports" backLabel="REPORTS" />
+      <PageHeader backHref="/reports" backLabel="REPORTS" />
 
       {status === "loading" && (
         <p className="report-detail-status font-display">DECODING…</p>
@@ -77,7 +77,10 @@ export default function ReportDetail({ periodKey }: Props) {
 
       {status === "ok" && report && (
         <article className="report-detail">
-          <p className="report-detail-headline">{report.payload.headline}</p>
+          <header className="report-detail-titleblock">
+            <h1 className="report-detail-title font-display">{labelFromKey(periodKey)}</h1>
+            <p className="report-detail-headline">{report.payload.headline}</p>
+          </header>
 
           <section className="report-detail-block">
             <h2 className="report-detail-h font-display">SENTIMENT</h2>
@@ -107,7 +110,7 @@ export default function ReportDetail({ periodKey }: Props) {
             <Paragraphs text={report.payload.latent} />
           </section>
 
-          <section className="report-detail-block">
+          <section className="report-detail-block is-advice">
             <h2 className="report-detail-h font-display">ADVICE</h2>
             <p className="report-detail-advice font-display">{report.payload.advice}</p>
             {report.payload.adviceDetail && (

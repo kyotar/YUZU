@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "@phosphor-icons/react";
 
 type Props = {
-  title: string;
+  title?: string;
   backHref: string;
   backLabel?: string;
 };
@@ -15,7 +15,7 @@ export default function PageHeader({ title, backHref, backLabel = "BACK" }: Prop
       <Link href={backHref} className="page-header-back" aria-label={backLabel}>
         <ArrowLeft size={18} weight="bold" />
       </Link>
-      <h1 className="page-header-title font-display">{title}</h1>
+      {title && <h1 className="page-header-title font-display">{title}</h1>}
     </header>
   );
 }
