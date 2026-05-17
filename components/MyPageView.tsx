@@ -30,9 +30,11 @@ const formatTimeLabel = (ts: number): string => {
   if (min < 60) return `${min}分前`;
   const hr = Math.floor(min / 60);
   if (hr < 24) return `${hr}時間前`;
+  const days = Math.floor(hr / 24);
+  if (days < 7) return `${days}日前`;
   const d = new Date(ts);
   const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())}`;
 };
 
 const calcStreak = (posts: Post[]): number => {
