@@ -72,23 +72,31 @@ export default function SpeakView({
       </div>
 
       <div className="speak-bottom">
-        <button
-          aria-label="長押しで録音"
-          aria-pressed={isRecording}
-          disabled={isBusy}
-          className={"mic-button-large" + (isRecording ? " recording" : "") + (permissionDenied ? " denied" : "")}
-          onMouseDown={onPressStart}
-          onMouseUp={onPressEnd}
-          onMouseLeave={() => { if (isRecording) onPressEnd(); }}
-          onTouchStart={onPressStart}
-          onTouchEnd={onPressEnd}
-          onTouchCancel={onPressCancel}
-          onContextMenu={(e) => e.preventDefault()}
-        >
-          {permissionDenied
-            ? <MicrophoneSlash size={40} weight="fill" />
-            : <Microphone size={40} weight="fill" />}
-        </button>
+        <div className="mic-wrap">
+          {isRecording && (
+            <svg className="mic-progress-ring" viewBox="0 0 116 116" aria-hidden>
+              <circle className="mic-progress-track" cx="58" cy="58" r="54" />
+              <circle className="mic-progress-fill" cx="58" cy="58" r="54" />
+            </svg>
+          )}
+          <button
+            aria-label="長押しで録音"
+            aria-pressed={isRecording}
+            disabled={isBusy}
+            className={"mic-button-large" + (isRecording ? " recording" : "") + (permissionDenied ? " denied" : "")}
+            onMouseDown={onPressStart}
+            onMouseUp={onPressEnd}
+            onMouseLeave={() => { if (isRecording) onPressEnd(); }}
+            onTouchStart={onPressStart}
+            onTouchEnd={onPressEnd}
+            onTouchCancel={onPressCancel}
+            onContextMenu={(e) => e.preventDefault()}
+          >
+            {permissionDenied
+              ? <MicrophoneSlash size={40} weight="fill" />
+              : <Microphone size={40} weight="fill" />}
+          </button>
+        </div>
       </div>
     </section>
   );
