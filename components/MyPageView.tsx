@@ -138,13 +138,15 @@ export default function MyPageView({ myEmoji, myPosts, mySessionId }: Props) {
         </div>
       </div>
 
-      <section className="mypage-section">
-        <h4 className="mypage-section-title font-display">SENTIMENT</h4>
-        <div className="mypage-chart-card">
-          <SentimentChart data={sentimentData} />
-          {analyzing && <p className="mypage-loading-hint">DECODING…</p>}
-        </div>
-      </section>
+      {(sentimentData.length > 0 || analyzing) && (
+        <section className="mypage-section">
+          <h4 className="mypage-section-title font-display">SENTIMENT</h4>
+          <div className="mypage-chart-card">
+            <SentimentChart data={sentimentData} />
+            {analyzing && <p className="mypage-loading-hint">DECODING…</p>}
+          </div>
+        </section>
+      )}
 
       <ReportsSection mySessionId={mySessionId} />
 

@@ -53,6 +53,8 @@ export default function ReportsSection({ mySessionId }: Props) {
     return () => { cancelled = true; };
   }, [hydrated, mySessionId]);
 
+  if (!hydrated || (!loading && reports.length === 0 && !error)) return null;
+
   return (
     <section className="mypage-section reports-section">
       <header className="reports-header">
@@ -62,9 +64,6 @@ export default function ReportsSection({ mySessionId }: Props) {
         </Link>
       </header>
 
-      {reports.length === 0 && !loading && !error && (
-        <p className="reports-empty">まだ無い。話せ。</p>
-      )}
       {error && <p className="reports-empty">{error}</p>}
 
       {reports.length > 0 && (

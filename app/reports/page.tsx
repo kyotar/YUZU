@@ -43,7 +43,10 @@ export default function ReportsIndexPage() {
 
       {loading && <p className="reports-empty">DECODING…</p>}
       {!loading && reports.length === 0 && !error && (
-        <p className="reports-empty">まだ無い。話せ。</p>
+        <div className="reports-empty-state">
+          <p className="reports-empty-headline font-display">NOTHING TO READ YET.</p>
+          <p className="reports-empty-body">沈黙は記録されない。話せ。</p>
+        </div>
       )}
       {error && <p className="reports-empty">{error}</p>}
 

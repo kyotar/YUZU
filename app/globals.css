@@ -690,7 +690,7 @@ body {
   min-height: 1.6em;
 }
 .speak-prompt {
-  margin: 32px 0 0;
+  margin: 0;
   text-align: center;
   color: #fff;
   display: flex;
@@ -745,7 +745,9 @@ body {
 .speak-bottom {
   width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
   padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 
@@ -838,7 +840,7 @@ body {
   position: absolute;
   border-radius: 50%;
   background: #fff;
-  opacity: 0.5;
+  opacity: 0.1;
   will-change: transform, opacity;
   animation: float-dot var(--dot-dur, 5s) ease-in-out var(--dot-delay, 0s) infinite;
 }
@@ -1412,6 +1414,26 @@ body {
   font-size: var(--text-sm);
   text-align: center;
   margin: 12px 0 4px;
+}
+.reports-empty-state {
+  padding: 48px 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.reports-empty-headline {
+  margin: 0;
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.reports-empty-body {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  line-height: 1.7;
 }
 
 .reports-list {

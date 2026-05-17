@@ -49,14 +49,7 @@ export default function SpeakView({
 
   return (
     <section className="speak-view">
-      {isIdleHero ? (
-        <div className="speak-prompt">
-          <p className="speak-prompt-text">{prompt}</p>
-          <p className="speak-prompt-hint">長押し。話せ。</p>
-        </div>
-      ) : (
-        <p className="speak-top">{status}</p>
-      )}
+      {!isIdleHero && <p className="speak-top">{status}</p>}
 
       <div className="speak-stage">
         {phase === "idle" && <FloatingDots phase={phase} />}
@@ -72,6 +65,12 @@ export default function SpeakView({
       </div>
 
       <div className="speak-bottom">
+        {isIdleHero && (
+          <div className="speak-prompt">
+            <p className="speak-prompt-text">{prompt}</p>
+            <p className="speak-prompt-hint">長押し。話せ。</p>
+          </div>
+        )}
         <div className="mic-wrap">
           {isRecording && (
             <svg className="mic-progress-ring" viewBox="0 0 116 116" aria-hidden>
