@@ -1165,22 +1165,6 @@ body {
 }
 
 .mypage-section { display: flex; flex-direction: column; gap: 10px; }
-.mypage-settings-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 18px;
-  background: var(--surface-card);
-  border: 1px solid var(--divider);
-  border-radius: 12px;
-  color: var(--ink);
-  font-size: var(--text-base);
-  font-weight: 500;
-  text-decoration: none;
-  transition: background 0.12s ease;
-}
-.mypage-settings-link:hover { background: var(--surface-hover); }
-.mypage-settings-link:active { transform: scale(0.99); }
 .mypage-section-title {
   text-transform: uppercase;
   letter-spacing: 0.04em;

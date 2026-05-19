@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { CaretRight } from "@phosphor-icons/react";
 import SentimentChart, { SentimentPoint } from "./SentimentChart";
 import ReportsSection from "./ReportsSection";
 import AvatarMark from "./AvatarMark";
@@ -138,13 +136,6 @@ export default function MyPageView({ myEmoji, myPosts, mySessionId }: Props) {
 
       <ReportsSection mySessionId={mySessionId} />
 
-      <section className="mypage-section">
-        <h4 className="mypage-section-title font-display">ACCOUNT</h4>
-        <Link href="/settings" className="mypage-settings-link">
-          <span>設定</span>
-          <CaretRight size={16} weight="bold" />
-        </Link>
-      </section>
     </section>
   );
 }
