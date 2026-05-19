@@ -21,7 +21,7 @@ const FRUITS = ["🍑","🍋","🍇","🥝","🍓","🫐","🍈","🍊","🍍","
 const pickFruit = () => FRUITS[Math.floor(Math.random() * FRUITS.length)];
 
 export default function Home() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<Post[] | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [shortTap, setShortTap] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
@@ -82,7 +82,7 @@ export default function Home() {
         setPosts(data?.posts ?? []);
         if (data?.sessionId) setMySessionId(data.sessionId);
       })
-      .catch(() => {});
+      .catch(() => { setPosts([]); });
   }, []);
 
   const pickRecorderMime = (): string | undefined => {
@@ -281,16 +281,18 @@ export default function Home() {
   };
 
   const myPosts = useMemo<Post[]>(() => {
+    if (!posts) return [];
     if (!mySessionId) return posts;
     return posts.filter((p) => p.sessionId === mySessionId);
   }, [posts, mySessionId]);
-  const isOnboarding = myPosts.length === 0;
+  const isLoaded = posts !== null;
+  const isOnboarding = isLoaded && myPosts.length === 0;
 
   return (
     <main
       className="app-shell"
       data-onboarding={isOnboarding ? "" : undefined}
-      data-has-tabbar={!isOnboarding ? "" : undefined}
+      data-has-tabbar={isLoaded && !isOnboarding ? "" : undefined}
     >
       <header className="app-header">
         <div className="app-header-row">
@@ -315,7 +317,7 @@ export default function Home() {
         </div>
       </header>
 
-      {isOnboarding ? (
+      {!isLoaded ? null : isOnboarding ? (
         <OnboardingView onStart={() => setRecordOpen(true)} />
       ) : tab === "home" ? (
         <HomeView myEmoji={myEmoji} myPosts={myPosts} />
@@ -323,7 +325,7 @@ export default function Home() {
         <MyPageView myEmoji={myEmoji} myPosts={myPosts} mySessionId={mySessionId} />
       )}
 
-      {!isOnboarding && (
+      {isLoaded && !isOnboarding && (
         <TabBar
           tab={tab}
           onChange={setTab}
@@ -343,7 +345,7 @@ export default function Home() {
         permissionDenied={permissionDenied}
         analyser={analyser}
         lastPost={lastPost}
-        posts={posts}
+        posts={posts ?? []}
         onPressStart={handlePressStart}
         onPressEnd={handlePressEnd}
         onPressCancel={handlePressCancel}
