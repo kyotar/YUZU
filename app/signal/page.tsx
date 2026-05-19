@@ -45,8 +45,10 @@ export default function SignalPage() {
                 <li key={n.id} className="signal-item">
                   <Link href={`/signal/${n.id}`} className="signal-item-link">
                     <span className="signal-item-date font-display">{formatDate(n.createdAt)}</span>
-                    <span className="signal-item-body">{n.body}</span>
-                    {isNew && <span className="signal-new-badge font-display">NEW</span>}
+                    <span className="signal-item-row">
+                      <span className={`signal-unread-dot${isNew ? " is-new" : ""}`} />
+                      <span className="signal-item-title">{n.title}</span>
+                    </span>
                   </Link>
                 </li>
               );

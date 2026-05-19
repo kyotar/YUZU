@@ -350,11 +350,10 @@ body {
 }
 .signal-item:first-child { border-top: 1px solid var(--divider); }
 .signal-item-link {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 12px;
-  align-items: baseline;
-  padding: 16px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 4px;
   text-decoration: none;
   color: var(--ink);
 }
@@ -365,16 +364,25 @@ body {
   color: var(--ink-muted);
   font-weight: 600;
 }
-.signal-item-body {
+.signal-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.signal-unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: transparent;
+}
+.signal-unread-dot.is-new {
+  background: var(--yuzu-zest);
+}
+.signal-item-title {
   font-size: var(--text-base);
   color: var(--ink);
-  line-height: 1.5;
-}
-.signal-new-badge {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  color: var(--yuzu-zest);
+  line-height: 1.4;
 }
 .signal-actions {
   display: flex;
