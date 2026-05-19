@@ -621,8 +621,8 @@ body {
 @keyframes rm-fly-to-bottom {
   from {
     opacity: 1;
-    background: var(--yuzu-zest);
-    color: #fff;
+    background: #fff;
+    color: var(--yuzu-zest);
     transform: translate(
       calc(-50% + var(--fly-dx, 0px)),
       var(--fly-dy, 0px)
@@ -656,8 +656,8 @@ body {
   }
   100% {
     opacity: 1;
-    background: var(--yuzu-zest);
-    color: #fff;
+    background: #fff;
+    color: var(--yuzu-zest);
     transform: translate(
       calc(-50% + var(--fly-dx, 0px)),
       var(--fly-dy, 0px)
