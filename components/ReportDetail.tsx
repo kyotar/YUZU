@@ -60,14 +60,14 @@ export default function ReportDetail({ periodKey }: Props) {
         </div>
       )}
       {status === "no_posts" && (
-        <p className="report-detail-status">この期間は何も無い。</p>
+        <p className="report-detail-status">この期間は何も無い</p>
       )}
       {status === "in_progress" && (
-        <p className="report-detail-status">まだ進行中の期間だ。</p>
+        <p className="report-detail-status">まだ進行中の期間だ</p>
       )}
       {status === "error" && (
         <div className="report-detail-status">
-          <p>失敗。話せ。</p>
+          <p>失敗、話せ</p>
           <button
             type="button"
             className="btn btn--secondary btn--sm"

@@ -12,7 +12,7 @@ const unbounded = Unbounded({
 export const metadata: Metadata = {
   metadataBase: new URL("https://yuzu-journal.vercel.app"),
   title: "YUZU",
-  description: "本物でいろ。",
+  description: "本物でいろ",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -41,11 +41,11 @@ export default function SpeakView({
     phase === "idle" && !permissionDenied && !error && !shortTap;
 
   const status =
-    permissionDenied ? "マイクを許可しろ。" :
+    permissionDenied ? "マイクを許可しろ" :
     error ? error :
     isBusy ? (statusMsg ?? "DECODING.") :
     isRecording ? "RECORDING." :
-    shortTap ? "短い。話せ。" : "";
+    shortTap ? "短い、話せ" : "";
 
   return (
     <section className="speak-view">
@@ -68,7 +68,7 @@ export default function SpeakView({
         {isIdleHero && (
           <div className="speak-prompt">
             <p className="speak-prompt-text">{prompt}</p>
-            <p className="speak-prompt-hint">長押し。話せ</p>
+            <p className="speak-prompt-hint">長押し、話せ</p>
           </div>
         )}
         <div className="mic-wrap">

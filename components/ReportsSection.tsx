@@ -60,7 +60,7 @@ export default function ReportsSection({ mySessionId, firstPostAt }: Props) {
         if (cancelled) return;
         setReports(Array.isArray(data.reports) ? data.reports : []);
       } catch {
-        if (!cancelled) setError("失敗。話せ。");
+        if (!cancelled) setError("失敗、話せ");
       } finally {
         if (!cancelled) setLoading(false);
       }

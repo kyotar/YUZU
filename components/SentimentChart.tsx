@@ -48,12 +48,12 @@ function makeDateTick(dates: string[]) {
 export default function SentimentChart({ data }: Props) {
   if (data.length === 0) {
     return (
-      <p className="sentiment-empty">データ無し。話せ。</p>
+      <p className="sentiment-empty">データ無し、話せ</p>
     );
   }
   if (data.length < 3) {
     return (
-      <p className="sentiment-empty">声が少ない。</p>
+      <p className="sentiment-empty">声が少ない</p>
     );
   }
 

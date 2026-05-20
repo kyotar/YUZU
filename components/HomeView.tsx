@@ -25,7 +25,7 @@ const formatTimeLabel = (ts: number): string => {
   return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())}`;
 };
 
-const EMPTY_PHRASES = ["話せ。", "出せ。", "整えるな。"] as const;
+const EMPTY_PHRASES = ["話せ", "出せ", "整えるな"] as const;
 
 export default function HomeView({ myEmoji, myPosts }: Props) {
   const emptyPhrase = useRef(EMPTY_PHRASES[Math.floor(Math.random() * EMPTY_PHRASES.length)]).current;
@@ -48,11 +48,8 @@ export default function HomeView({ myEmoji, myPosts }: Props) {
               <div className="post-header">
                 <AvatarMark emoji={p.emoji ?? myEmoji} size="sm" />
                 <span className="post-name">{nickname}</span>
-                <span className="post-meta">
-                  <span className="post-index font-display">#{p.index}</span>
-                  <span className="post-meta-sep" aria-hidden>·</span>
-                  <time className="post-time">{formatTimeLabel(p.createdAt)}</time>
-                </span>
+                <time className="post-time">{formatTimeLabel(p.createdAt)}</time>
+                <span className="post-index font-display">#{p.index}</span>
                 <CopyButton text={p.text} />
               </div>
               <div className="post-body">

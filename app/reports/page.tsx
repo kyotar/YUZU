@@ -29,7 +29,7 @@ export default function ReportsIndexPage() {
         if (cancelled) return;
         setReports(Array.isArray(data.reports) ? data.reports : []);
       } catch {
-        if (!cancelled) setError("失敗。話せ。");
+        if (!cancelled) setError("失敗、話せ");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -45,7 +45,7 @@ export default function ReportsIndexPage() {
       {!loading && reports.length === 0 && !error && (
         <div className="reports-empty-state">
           <p className="reports-empty-headline font-display">NOTHING TO READ YET.</p>
-          <p className="reports-empty-body">沈黙は記録されない。話せ。</p>
+          <p className="reports-empty-body">沈黙は記録されない、話せ</p>
         </div>
       )}
       {error && <p className="reports-empty">{error}</p>}
