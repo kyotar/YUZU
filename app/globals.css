@@ -604,7 +604,7 @@ body {
 .record-modal[data-anim="open"] .record-modal-close,
 .record-modal[data-anim="open"] .speak-view,
 .record-modal[data-anim="open"] .complete-view {
-  animation: content-appear 0.2s ease forwards;
+  animation: content-appear 0.2s ease backwards;
 }
 
 /* ── Closing ── */
@@ -951,8 +951,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 24px 24px calc(48px + env(safe-area-inset-bottom));
+  justify-content: flex-start;
+  padding: 72px 24px calc(48px + env(safe-area-inset-bottom));
   color: #fff;
   gap: 28px;
   z-index: 1;
@@ -962,12 +962,8 @@ body {
 .complete-card {
   width: 100%;
   max-width: 420px;
-  max-height: 38vh;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  background: #fff;
-  color: var(--ink);
+  background: var(--ink);
+  color: #fff;
   border-radius: 2px;
   padding: 22px 22px;
   opacity: 0;
@@ -1053,18 +1049,20 @@ body {
 
 .complete-back-btn {
   background: #fff;
-  color: var(--yuzu-zest);
+  color: var(--ink);
   border: none;
   padding: 14px 36px;
-  border-radius: 999px;
-  font-size: var(--text-base);
-  font-weight: 600;
+  border-radius: 4px;
+  font-family: var(--font-display), 'Unbounded', sans-serif;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
   cursor: pointer;
-  opacity: 0;
-  animation: card-slide-up 0.4s ease 1.5s forwards;
-  transition: transform 0.15s var(--ease-soft);
+  animation: card-slide-up 0.4s ease 1.5s backwards;
+  transition: transform 0.12s var(--ease-soft);
 }
-.complete-back-btn:active { transform: scale(0.96); }
+.complete-back-btn:hover { transform: translateY(-1px); }
+.complete-back-btn:active { transform: scale(0.97); transition-duration: 60ms; }
 
 @keyframes card-slide-up {
   0%   { opacity: 0; transform: translateY(20px); }
@@ -1268,7 +1266,7 @@ body {
 /* 完了画面の RECORDED. スタンプ */
 .complete-stamp {
   font-weight: 900;
-  font-size: 56px;
+  font-size: 40px;
   letter-spacing: -0.02em;
   color: var(--ink);
   margin: 0;
