@@ -126,6 +126,24 @@ body {
   white-space: nowrap;
 }
 
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.post-index {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+}
+.post-meta-sep {
+  font-size: 10px;
+  color: var(--ink-muted);
+  opacity: 0.5;
+}
+
 .post-copy-btn {
   flex: 0 0 auto;
   width: 28px;
@@ -350,11 +368,10 @@ body {
 }
 .signal-item:first-child { border-top: 1px solid var(--divider); }
 .signal-item-link {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 12px;
-  align-items: baseline;
-  padding: 16px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 4px;
   text-decoration: none;
   color: var(--ink);
 }
@@ -365,16 +382,25 @@ body {
   color: var(--ink-muted);
   font-weight: 600;
 }
-.signal-item-body {
+.signal-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.signal-unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: transparent;
+}
+.signal-unread-dot.is-new {
+  background: var(--yuzu-zest);
+}
+.signal-item-title {
   font-size: var(--text-base);
   color: var(--ink);
-  line-height: 1.5;
-}
-.signal-new-badge {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  color: var(--yuzu-zest);
+  line-height: 1.4;
 }
 .signal-actions {
   display: flex;
@@ -1219,7 +1245,7 @@ body {
 
 .mypage-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 0;
 }
 .mypage-stat-card {
@@ -1238,11 +1264,15 @@ body {
 .mypage-stat-value {
   font-family: var(--font-display), 'Unbounded', sans-serif;
   font-weight: 700;
-  font-size: var(--text-3xl);
+  font-size: var(--text-2xl);
   letter-spacing: -0.02em;
   line-height: 1;
   color: var(--ink);
   order: 1;
+}
+.mypage-stat-value--index {
+  font-size: var(--text-xl);
+  letter-spacing: -0.01em;
 }
 .mypage-stat-label {
   order: 0;
@@ -1338,9 +1368,19 @@ body {
   font-size: 56px;
   letter-spacing: -0.02em;
   color: var(--ink);
-  margin: 0 0 16px;
+  margin: 0;
   text-align: left;
   animation: mark-stamp 0.6s var(--ease-snap) both;
+}
+.complete-index {
+  font-weight: 700;
+  font-size: var(--text-2xl);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 8px;
+  text-align: left;
+  opacity: 0;
+  animation: card-slide-up 0.4s ease 0.3s forwards;
 }
 @keyframes mark-stamp {
   0%   { opacity: 0; transform: scale(1.8); }
