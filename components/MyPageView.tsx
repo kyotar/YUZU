@@ -126,8 +126,13 @@ export default function MyPageView({ myEmoji, myPosts, mySessionId }: Props) {
         <section className="mypage-section">
           <h4 className="mypage-section-title font-display">SENTIMENT</h4>
           <div className="mypage-chart-card">
-            <SentimentChart data={sentimentData} />
-            {analyzing && <p className="mypage-loading-hint">DECODING.</p>}
+            {analyzing ? (
+              <p className="mypage-loading-hint">DECODING.</p>
+            ) : sentimentData.length < 3 ? (
+              <p className="sentiment-empty">声が少ない</p>
+            ) : (
+              <SentimentChart data={sentimentData} />
+            )}
           </div>
         </section>
       )}
