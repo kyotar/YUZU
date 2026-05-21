@@ -16,7 +16,7 @@ import { loadSentimentCache, saveSentimentCache } from "@/lib/userClient";
 type Phase = "idle" | "recording" | "busy" | "complete";
 
 const EMOJI_KEY = "yuzu-emoji";
-const MIN_RECORD_MS = 300;
+const MIN_RECORD_MS = 500;
 const FRUITS = ["🍑","🍋","🍇","🥝","🍓","🫐","🍈","🍊","🍍","🥭","🍌","🍒","🍎","🍐","🫒"];
 const pickFruit = () => FRUITS[Math.floor(Math.random() * FRUITS.length)];
 
