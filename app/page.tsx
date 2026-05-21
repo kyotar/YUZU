@@ -329,7 +329,7 @@ export default function Home() {
           tab={tab}
           onChange={setTab}
           onOpenRecord={() => setRecordOpen(true)}
-          hidden={recordOpen}
+          hidden={recordOpen || !!detailPost}
         />
       )}
 
