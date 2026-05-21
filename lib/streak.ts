@@ -2,8 +2,9 @@ import type { Post } from "./types";
 
 const WEEKDAY_JA = ["日", "月", "火", "水", "木", "金", "土"] as const;
 
-function dayKey(date: Date): string {
-  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+export function dayKey(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
 export type WeekDay = { label: string; done: boolean; isToday: boolean };

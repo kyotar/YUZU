@@ -5,6 +5,7 @@ import SentimentChart, { SentimentPoint } from "./SentimentChart";
 import ReportsSection from "./ReportsSection";
 import AvatarMark from "./AvatarMark";
 import type { Post } from "@/lib/types";
+import { computeStreak, dayKey } from "@/lib/streak";
 import {
   getNickname,
   loadSentimentCache,
@@ -17,23 +18,7 @@ type Props = {
   mySessionId: string | null;
 };
 
-const dateKey = (ts: number): string => {
-  const d = new Date(ts);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-};
-
-const calcStreak = (posts: Post[]): number => {
-  if (posts.length === 0) return 0;
-  const days = new Set(posts.map((p) => dateKey(p.createdAt)));
-  let streak = 0;
-  const cur = new Date();
-  while (days.has(dateKey(cur.getTime()))) {
-    streak += 1;
-    cur.setDate(cur.getDate() - 1);
-  }
-  return streak;
-};
+const dateKey = (ts: number): string => dayKey(new Date(ts));
 
 export default function MyPageView({ myEmoji, myPosts, mySessionId }: Props) {
   const [hydrated, setHydrated] = useState(false);
@@ -94,7 +79,7 @@ export default function MyPageView({ myEmoji, myPosts, mySessionId }: Props) {
       .sort((a, b) => a.date.localeCompare(b.date));
   }, [myPosts, cache]);
 
-  const streak = useMemo(() => calcStreak(myPosts), [myPosts]);
+  const streak = useMemo(() => computeStreak(myPosts).streak, [myPosts]);
   const recordedDays = useMemo(
     () => new Set(myPosts.map((p) => dateKey(p.createdAt))).size,
     [myPosts],
