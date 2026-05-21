@@ -80,13 +80,17 @@ export default function MyPageView({ myEmoji, myPosts, mySessionId }: Props) {
   }, [myPosts, cache]);
 
   const streak = useMemo(() => computeStreak(myPosts).streak, [myPosts]);
-  const recordedDays = useMemo(
-    () => new Set(myPosts.map((p) => dateKey(p.createdAt))).size,
-    [myPosts],
-  );
   // myPosts is newest-first; [0] = latest post, [last] = oldest (first ever)
   const latestIndex = myPosts.length > 0 ? myPosts[0].index : null;
   const firstPostAt = myPosts.length > 0 ? myPosts[myPosts.length - 1].createdAt : null;
+  const daysSinceStart = useMemo(() => {
+    if (firstPostAt === null) return 0;
+    const start = new Date(firstPostAt);
+    const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    return Math.floor((today - startDay) / 86400000) + 1;
+  }, [firstPostAt]);
 
   return (
     <section className="mypage-view">
@@ -100,7 +104,7 @@ export default function MyPageView({ myEmoji, myPosts, mySessionId }: Props) {
       <div className="mypage-stats">
         <div className="mypage-stat-card">
           <span className="mypage-stat-label font-display">DAY</span>
-          <span className="mypage-stat-value font-display">{recordedDays}</span>
+          <span className="mypage-stat-value font-display">{daysSinceStart}</span>
         </div>
         <div className="mypage-stat-card">
           <span className="mypage-stat-label font-display">RECORDS</span>
