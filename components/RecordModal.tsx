@@ -24,7 +24,7 @@ type Props = {
   analyser: AnalyserNode | null;
   lastPost: Post | null;
   posts: Post[];
-  onPressStart: (e: React.MouseEvent | React.TouchEvent) => void;
+  onPressStart: (e: React.PointerEvent) => void;
   onPressEnd: () => void;
   onPressCancel: () => void;
 };

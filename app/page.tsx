@@ -182,8 +182,11 @@ export default function Home() {
     teardownAnalyser();
   };
 
-  const handlePressStart = async (e: React.MouseEvent | React.TouchEvent) => {
+  const handlePressStart = async (e: React.PointerEvent) => {
     e.preventDefault();
+    try {
+      (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+    } catch {}
     if (phaseRef.current !== "idle") return;
 
     setError(null);

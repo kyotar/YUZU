@@ -16,7 +16,7 @@ type Props = {
   hint: string | null;
   permissionDenied: boolean;
   analyser: AnalyserNode | null;
-  onPressStart: (e: React.MouseEvent | React.TouchEvent) => void;
+  onPressStart: (e: React.PointerEvent) => void;
   onPressEnd: () => void;
   onPressCancel: () => void;
 };
@@ -83,12 +83,9 @@ export default function SpeakView({
             aria-pressed={isRecording}
             disabled={isBusy}
             className={"mic-button-large" + (isRecording ? " recording" : "") + (permissionDenied ? " denied" : "")}
-            onMouseDown={onPressStart}
-            onMouseUp={onPressEnd}
-            onMouseLeave={() => { if (isRecording) onPressEnd(); }}
-            onTouchStart={onPressStart}
-            onTouchEnd={onPressEnd}
-            onTouchCancel={onPressCancel}
+            onPointerDown={onPressStart}
+            onPointerUp={onPressEnd}
+            onPointerCancel={onPressCancel}
             onContextMenu={(e) => e.preventDefault()}
           >
             {permissionDenied
