@@ -422,6 +422,22 @@ body {
   gap: 12px;
   min-height: 52px;
 }
+button.settings-row {
+  appearance: none;
+  background: none;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  width: 100%;
+  cursor: pointer;
+}
+button.settings-row:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
 .settings-row:last-child { border-bottom: 1px solid var(--surface-border); }
 .settings-row-label {
   flex: 1;

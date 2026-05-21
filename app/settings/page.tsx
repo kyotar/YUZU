@@ -51,34 +51,38 @@ export default function SettingsPage() {
             <CaretRight size={14} className="settings-row-chevron" />
           </div>
 
-          <div className="settings-row" onClick={!editing ? startEdit : undefined} style={{ cursor: editing ? "default" : "pointer" }}>
-            <span className="settings-row-label">NAME</span>
-            {editing ? (
-              <>
-                <input
-                  className="settings-nickname-input"
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  autoFocus
-                  maxLength={20}
-                  placeholder="名前をつけよう"
-                />
-                <button
-                  type="button"
-                  className="settings-save-btn font-display"
-                  onClick={(e) => { e.stopPropagation(); commitEdit(); }}
-                >
-                  保存
-                </button>
-              </>
-            ) : (
-              <>
-                <span className="settings-row-value">{nickname}</span>
-                <CaretRight size={14} className="settings-row-chevron" />
-              </>
-            )}
-          </div>
+          {editing ? (
+            <div className="settings-row">
+              <span className="settings-row-label">NAME</span>
+              <input
+                className="settings-nickname-input"
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                onKeyDown={handleKeyDown}
+                autoFocus
+                maxLength={20}
+                placeholder="名前をつけよう"
+              />
+              <button
+                type="button"
+                className="settings-save-btn font-display"
+                onClick={commitEdit}
+              >
+                保存
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="settings-row"
+              onClick={startEdit}
+              aria-label="ニックネームを変更"
+            >
+              <span className="settings-row-label">NAME</span>
+              <span className="settings-row-value">{nickname}</span>
+              <CaretRight size={14} className="settings-row-chevron" />
+            </button>
+          )}
         </section>
 
         <section className="settings-section">
